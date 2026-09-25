@@ -24,7 +24,7 @@ Fleet work is on the bus in `terchris/urb-agents` —
 | # | What | Why this one |
 |---|---|---|
 | **1** | [PLAN-github-actions-ci](../active/PLAN-github-actions-ci.md) task 1.5, and [PLAN-fix-mac-test-startup-line](PLAN-fix-mac-test-startup-line.md): get the test folders into CI | CI is the gate, and it doesn't yet look at `tests/` |
-| **2** | The user-run install script (approved as 1 on #1520): write `PLAN-windows-user-installer.md` from [INVESTIGATE-windows-one-script-install](INVESTIGATE-windows-one-script-install.md). Step one is a read-only check script, which is also how to test it on Terje's PC. **It must also install VS Code (if missing) and the Dev Containers extension (always, as the user):** agreed with DCT on #1533, where nothing did. The PR #18 test showed `-ExecutionPolicy Bypass` is not blocked there | Terje's top ask after CI; it's also the faster test path |
+| **2** | The user-run install script (approved as 1 on #1520): write `PLAN-windows-user-installer.md` from [INVESTIGATE-windows-one-script-install](INVESTIGATE-windows-one-script-install.md). Step one is a read-only check script, which is also how to test it on Terje's PC. **It must also detect VS Code and install it per user when missing** (#1533). **The Dev Containers extension is DCT's**: its script installs it, and ours only checks afterwards. The PR #18 test showed `-ExecutionPolicy Bypass` is not blocked there | Terje's top ask after CI; it's also the faster test path |
 
 ## Waiting on someone — ordered by what it unblocks
 
