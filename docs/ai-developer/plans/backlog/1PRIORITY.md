@@ -23,7 +23,8 @@ Fleet work is on the bus in `terchris/urb-agents` —
 
 | # | What | Why this one |
 |---|---|---|
-| **1** | [PLAN-rancher-124-and-host-checks](PLAN-rancher-124-and-host-checks.md): **approved (#1519) and implemented** on local branch `feature/rancher-124-and-host-checks` (phases 1–3). Next: push/PR (#1523), PowerShell validation, then the test on Terje's managed PC | Approved shipping work; it brings the Windows packages up to DCT's requirements |
+| **0** | [PLAN-github-actions-ci](PLAN-github-actions-ci.md), approved as 4a (#1520). **No host in the fleet can run `pwsh`**, so this is the only way PowerShell gets validated | Gates PR #18 and every future PowerShell change |
+| **1** | [PLAN-rancher-124-and-host-checks](PLAN-rancher-124-and-host-checks.md): **approved (#1519) and implemented** on local branch `feature/rancher-124-and-host-checks` (phases 1–3). Pushed as **draft PR #18** (not to be merged). Next: PowerShell validation (row 0), then the test on Terje's managed PC | Approved shipping work; it brings the Windows packages up to DCT's requirements |
 | **2** | [INVESTIGATE-windows-one-script-install](INVESTIGATE-windows-one-script-install.md): desk work that needs no machine. Map each design step to the existing `scripts-win/` code, list what is reusable, and add the DCT handover contract (urb-agents #1505) to it | High priority (Terje). It can move before test machines exist, and the contract shapes the design |
 | **3** | Write the step-by-step test script for Terje's managed Windows PC. It is **not clean** (Rancher 1.24.0 and WSL already installed). Round 1 only reads the machine's state and changes nothing. Send it to terje as its own item | Terje offered the PC (#1512); a ready script keeps his machine time short |
 
@@ -31,13 +32,14 @@ Fleet work is on the bus in `terchris/urb-agents` —
 
 | What | Who | Since | Unblocks | Raised |
 |---|---|---|---|---|
-| Push + PR of the implemented branch, and a way to run the PowerShell validator (no `pwsh` on tecMacDev) | ops-dev | 2026-09-25 | Validating, then testing, the approved Windows changes | #1523 |
 | Upgrade existing 1.22.0 PCs? (`detect.ps1` ignores the version; re-runs wipe users' Rancher settings) | Terje | 2026-09-25 | 1.24.0 reaching already-deployed PCs | #1522 |
 | Which of the four asks to start: user-run script (also the faster test), end-user README, web page (`helpers-no/sovereignsky-site`), GitHub Actions `.intunewin` build and public release | Terje | 2026-09-25 | Everything after the plan review; the installer lives **here** (decided, #1509) | #1520 |
 | A **blank** Jamf Mac, for the clean-install path only. Deferred: Terje would have to ask the Jamf admin, and nothing needs it yet. **tecMacWork** (Jamf-managed, Rancher already installed) covers detection, second run, and parts a/d of #1510 | Terje / Jamf admin | 2026-09-25 | Proving the Mac clean-install path | #1510 |
 | DCT: release assets + `SHA256SUMS`, a pinned image, a disk-space figure, and the `devcontainer-init` behaviours moved into its script | devcontainer-toolbox | 2026-09-25 | Pinned, verified handover (#1505 points 2, 4) | #1505 |
 
 ## If Terje wants work started, these rank highest
+
+*Approved on #1520, in this order after row 0:* **1** the user-run install script (also the faster test), **2** the end-user README, **3** the web page (PR to `helpers-no/sovereignsky-site`, AI-drafted texts go to Terje for review). **4b** (public release of `.intunewin`) is *later*.
 
 1. Part c (retire `devcontainer-init`): answered "later"; it waits on devcontainer-toolbox
 2. The user-run Windows installer PLAN. Its location is decided (this repo, #1509), and the start waits on #1520
