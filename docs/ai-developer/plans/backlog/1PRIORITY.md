@@ -24,15 +24,16 @@ Fleet work is on the bus in `terchris/urb-agents` —
 | # | What | Why this one |
 |---|---|---|
 | **1** | [INVESTIGATE-windows-one-script-install](INVESTIGATE-windows-one-script-install.md): desk work that needs no machine. Map each design step to the existing `scripts-win/` code, list what is reusable, and add the DCT handover contract (urb-agents #1505) to it | High priority (Terje). It can move before test machines exist, and the contract shapes the design |
+| **2** | Write the step-by-step test script for Terje's managed Windows PC. It is **not clean** (Rancher 1.24.0 and WSL already installed). Round 1 only reads the machine's state and changes nothing. Send it to terje as its own item | Terje offered the PC (#1512); a ready script keeps his machine time short |
 
 ## Waiting on someone — ordered by what it unblocks
 
 | What | Who | Since | Unblocks | Raised |
 |---|---|---|---|---|
-| Where the one script lives (this repo or devcontainer-toolbox), and how code is shared | Terje, with devcontainer-toolbox | 2026-09-25 | The Windows installer PLAN, and the command DCT shows users (#1505 point 3) | #1492, #1505 |
-| Go for the script changes: Windows 11 build ≥ 22000 + x64 checks, Rancher 1.22.0 → 1.24.0 (win + mac), `devcontainer-init` calling DCT's script | Terje | 2026-09-25 | Meeting DCT's host requirements (#1505 points 1, 4) | #1505 |
-| Intel Macs: in scope or out? (Our scripts are Apple Silicon only today) | Terje | 2026-09-25 | The macOS row of DCT's requirements page | #1505 |
-| A managed Windows 11 PC (Intune, Admin on Demand) and a Jamf Mac to test on | Terje | 2026-09-25 | Every untested claim in the one-script investigation | #1498 |
+| Where the one script lives (this repo or devcontainer-toolbox), and how code is shared | Terje, with devcontainer-toolbox | 2026-09-25 | The Windows installer PLAN, and the command DCT shows users (#1505 point 3) | #1509 |
+| Go for the script changes: Windows 11 build ≥ 22000 + x64 checks, Rancher 1.22.0 → 1.24.0 (win + mac), `devcontainer-init` calling DCT's script | Terje | 2026-09-25 | Meeting DCT's host requirements (#1505 points 1, 4) | #1510 |
+| Intel Macs: in scope or out? (Our scripts are Apple Silicon only today) | Terje | 2026-09-25 | The macOS row of DCT's requirements page | #1511 |
+| A Jamf Mac to test on (only needed when the Mac work starts) | Terje | 2026-09-25 | The Mac side of the investigation | #1512 (Windows half answered) |
 | DCT: release assets + `SHA256SUMS`, a pinned image, a disk-space figure, and the `devcontainer-init` behaviours moved into its script | devcontainer-toolbox | 2026-09-25 | Pinned, verified handover (#1505 points 2, 4) | #1505 |
 
 ## If Terje wants work started, these rank highest
