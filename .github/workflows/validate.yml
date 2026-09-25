@@ -41,8 +41,9 @@ jobs:
         run: Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
       - name: Validate PowerShell packages
         run: bash docs/ai-developer/tools/validate-powershell.sh
-      # Unit tests are added in the same PR as the test file they run
-      # (test-platform-check.ps1 arrives with the Rancher 1.24 PR, #18).
+      - name: Unit test - Windows 11 + x64 check
+        shell: pwsh
+        run: ./scripts-win/wsl2/tests/test-platform-check.ps1
 
   intunewin:
     name: intunewin (${{ matrix.package }})
