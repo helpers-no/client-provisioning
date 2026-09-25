@@ -1,5 +1,7 @@
 # Plan: Adopt the fleet ai-developer template, and add AGENTS.md
 
+Bring docs/ai-developer/ up to the fleet ai-developer-template and add a root AGENTS.md, keeping this repo's own script standard.
+
 > **IMPLEMENTATION RULES:** Before implementing this plan, read and follow:
 > - [WORKFLOW.md](../../WORKFLOW.md) — The implementation process
 > - [PLANS.md](../../PLANS.md) — Plan structure and best practices
@@ -98,26 +100,26 @@ The files are identical to the template (`diff` against the fetched copy).
 
 ---
 
-## Phase 2: project doc, then replace README / WORKFLOW / PLANS
+## Phase 2: project doc, then replace README / WORKFLOW / PLANS — DONE
 
 ### Tasks
 
-- [ ] 2.1 Write `project-client-provisioning.md` covering: what the repo is (host installers for
+- [x] 2.1 Write `project-client-provisioning.md` covering: what the repo is (host installers for
       managed Windows via Intune and macOS via Jamf); layout (`scripts-mac/`, `scripts-win/`,
       `docs/`, `.azure-pipelines/`); a current package table for **both** platforms; validation
       and version commands for bash **and** PowerShell; the templates; git host (GitHub `origin`,
       Azure Pipelines CI, Azure DevOps ops-team copy); devcontainer = yes (DCT); links to
       `docs/SCRIPT-STANDARDS.md`, `docs/MANUAL-TEST-WINDOWS-REINSTALL.md`, `docs/CICD.md`,
       `docs/OPS.md`; URB agent id and inbox
-- [ ] 2.2 Contracts section: **anything published runs with admin rights on other people's managed
+- [x] 2.2 Contracts section: **anything published runs with admin rights on other people's managed
       machines**, so releases are outward-facing and a human decides. Ask before any git
       add / commit / push / branch / merge. Every script follows `rules/`. Validate before committing
-- [ ] 2.3 Move content out of the old files so nothing is lost: the IMPLEMENTATION RULES blocks
+- [x] 2.3 Move content out of the old files so nothing is lost: the IMPLEMENTATION RULES blocks
       (bash, **and a new PowerShell block**, plus non-script), the three-layer script-standard
       description, and the `SCRIPT_VER` version-management rule from old `WORKFLOW.md`
-- [ ] 2.4 Replace `README.md`, `WORKFLOW.md`, `PLANS.md` with the template versions. Change only
+- [x] 2.4 Replace `README.md`, `WORKFLOW.md`, `PLANS.md` with the template versions. Change only
       what has to change (for example the `project.EXAMPLE.md` link)
-- [ ] 2.5 Replace `DEVCONTAINER-TOOLBOX.md` → `DEVCONTAINER.md` and
+- [x] 2.5 Replace `DEVCONTAINER-TOOLBOX.md` → `DEVCONTAINER.md` and
       `GIT-HOSTING-AZURE-DEVOPS.md` → `AZURE-DEVOPS.md` (`git mv`, then the template content).
       Before overwriting, diff the old files and move any repo-specific lines into the project doc
 
@@ -223,15 +225,33 @@ Both validators exit 0, and the link check reports zero broken links.
 | README "This Project" / packages / validation / templates | repo facts | project doc (updated for `scripts-win/`) |
 | WORKFLOW "Version Management" | `SCRIPT_VER` bump rule | project doc |
 | WORKFLOW flow / feature branch | generic process | template `WORKFLOW.md` |
+| README "Folder Structure" | tree | dropped: the template README and project doc Layout cover it |
+| README "Devcontainer toolbox" pointer | link | project doc, Devcontainer |
+| DEVCONTAINER-TOOLBOX config scripts, `enabled-tools.conf`, `project-installs.sh` | repo-specific DCT setup | project doc, Devcontainer |
+| DEVCONTAINER-TOOLBOX "Reporting Bugs" (write into `devcontainer-toolbox-issues/`) | superseded | project doc: `urb send --to devcontainer-toolbox` or a GitHub issue |
+| DEVCONTAINER-TOOLBOX quick commands, `dev-tools` JSON queries, tool registry | generic DCT usage | dropped: covered by template `DEVCONTAINER.md` and the DCT website |
+| GIT-HOSTING-AZURE-DEVOPS auth via `config-azure-devops.sh` | repo-specific | new `project-azure-devops.md` |
+| GIT-HOSTING-AZURE-DEVOPS pipeline create/runs/artifacts ("Build Intune Packages") | repo-specific | `project-azure-devops.md` |
+| GIT-HOSTING-AZURE-DEVOPS wiki publishing and `.order` | repo-specific | `project-azure-devops.md` |
+| GIT-HOSTING-AZURE-DEVOPS PRs, merge, repos, boards, GitHub-vs-az table | generic `az` | template `AZURE-DEVOPS.md` |
+| `docs/ai-developer/.order` (wiki page order) | old names | rewritten for the new file names |
+
+**Divergence found while implementing:** a second project file, `project-azure-devops.md`, keeps the
+repo-specific pipeline and wiki commands out of the main project doc. The template README says to
+read *all* `project-*.md` files, so this is within the convention.
+
+**Template frontmatter:** the template docs start with `mdx: format: md` YAML frontmatter, which is
+meant for Docusaurus. Azure DevOps wiki shows frontmatter as a table at the top of the page. This is
+cosmetic, and the files stay identical to the template, so the template can be synced later.
 
 **devcontainer-toolbox-issues/ → issue mapping** (fill in 3.3).
 
 ## Files to Modify
 
 - New: `AGENTS.md`, `docs/ai-developer/{GIT,COORDINATION,VERIFICATION,WORKTREE,SECURITY}.md`,
-  `docs/ai-developer/project-client-provisioning.md`, `plans/{active,completed}/README.md`,
+  `docs/ai-developer/project-client-provisioning.md`, `docs/ai-developer/project-azure-devops.md`, `plans/{active,completed}/README.md`,
   `plans/backlog/{1PRIORITY,index,INVESTIGATE-windows-one-script-install}.md`
 - Replaced: `docs/ai-developer/{README,WORKFLOW,PLANS}.md`
 - Renamed: `DEVCONTAINER-TOOLBOX.md` → `DEVCONTAINER.md`, `GIT-HOSTING-AZURE-DEVOPS.md` → `AZURE-DEVOPS.md`
-- Edited: `CLAUDE.md`, `docs/README.md`, `docs/QUICK-GIT.md`, `docs/QUICK-START.md`, `docs/AI-SUPPORTED-DEVELOPMENT.md`
+- Edited: `docs/ai-developer/.order`, `CLAUDE.md`, `docs/README.md`, `docs/QUICK-GIT.md`, `docs/QUICK-START.md`, `docs/AI-SUPPORTED-DEVELOPMENT.md`
 - Deleted: `docs/ai-developer/devcontainer-toolbox-issues/` (12 files)
