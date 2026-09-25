@@ -23,7 +23,7 @@ Fleet work is on the bus in `terchris/urb-agents` —
 
 | # | What | Why this one |
 |---|---|---|
-| **1** | [PLAN-rancher-124-and-host-checks](PLAN-rancher-124-and-host-checks.md) is written. **Waiting on Terje's review** (Q1–Q4, including Mac Rancher scripts → legacy) before any script changes | Approved shipping work (#1510), and the direction changed on #1516 |
+| **1** | [PLAN-rancher-124-and-host-checks](PLAN-rancher-124-and-host-checks.md): **approved (#1519) and implemented** on local branch `feature/rancher-124-and-host-checks` (phases 1–3). Next: push/PR (#1523), PowerShell validation, then the test on Terje's managed PC | Approved shipping work; it brings the Windows packages up to DCT's requirements |
 | **2** | [INVESTIGATE-windows-one-script-install](INVESTIGATE-windows-one-script-install.md): desk work that needs no machine. Map each design step to the existing `scripts-win/` code, list what is reusable, and add the DCT handover contract (urb-agents #1505) to it | High priority (Terje). It can move before test machines exist, and the contract shapes the design |
 | **3** | Write the step-by-step test script for Terje's managed Windows PC. It is **not clean** (Rancher 1.24.0 and WSL already installed). Round 1 only reads the machine's state and changes nothing. Send it to terje as its own item | Terje offered the PC (#1512); a ready script keeps his machine time short |
 
@@ -31,7 +31,8 @@ Fleet work is on the bus in `terchris/urb-agents` —
 
 | What | Who | Since | Unblocks | Raised |
 |---|---|---|---|---|
-| Review of PLAN-rancher-124-and-host-checks: Q1 legacy scope, Q2 profile location, Q3 MSI hash check, Q4 drop part d | Terje | 2026-09-25 | All script work in the plan | #1519 |
+| Push + PR of the implemented branch, and a way to run the PowerShell validator (no `pwsh` on tecMacDev) | ops-dev | 2026-09-25 | Validating, then testing, the approved Windows changes | #1523 |
+| Upgrade existing 1.22.0 PCs? (`detect.ps1` ignores the version; re-runs wipe users' Rancher settings) | Terje | 2026-09-25 | 1.24.0 reaching already-deployed PCs | #1522 |
 | Which of the four asks to start: user-run script (also the faster test), end-user README, web page (`helpers-no/sovereignsky-site`), GitHub Actions `.intunewin` build and public release | Terje | 2026-09-25 | Everything after the plan review; the installer lives **here** (decided, #1509) | #1520 |
 | A **blank** Jamf Mac, for the clean-install path only. Deferred: Terje would have to ask the Jamf admin, and nothing needs it yet. **tecMacWork** (Jamf-managed, Rancher already installed) covers detection, second run, and parts a/d of #1510 | Terje / Jamf admin | 2026-09-25 | Proving the Mac clean-install path | #1510 |
 | DCT: release assets + `SHA256SUMS`, a pinned image, a disk-space figure, and the `devcontainer-init` behaviours moved into its script | devcontainer-toolbox | 2026-09-25 | Pinned, verified handover (#1505 points 2, 4) | #1505 |
