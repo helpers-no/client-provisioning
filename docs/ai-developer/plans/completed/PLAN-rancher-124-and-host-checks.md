@@ -11,7 +11,7 @@ Bring the Windows packages up to devcontainer-toolbox's host requirements, and r
 >
 > **UPDATE THIS PLAN AS YOU WORK:** Mark tasks `[x]` when done, add `— DONE` to phase headers, update status.
 
-## Status: Active
+## Status: Completed: merged as PR #18 (`64dc636`), 2026-09-25
 
 **Terje's answers (urb-agents #1519, 2026-09-25):** Q1 yes, Q2 yes, Q3 yes, Q4 drop.
 
@@ -153,7 +153,7 @@ The validators pass as in Phase 1. On Terje's PC (Windows 11, x64) both checks m
 - a clean install;
 - the rejections on Windows 10 and ARM, which are unit-tested only.
 
-- [ ] 4.3 Ask on the bus before push, PR, merge, and building/uploading the `.intunewin`
+- [x] 4.3 Asked on the bus: push + PR (#1523), merge (#1529). **Uploading to Intune is Terje's** (handover item)
 
 ---
 
@@ -176,3 +176,15 @@ The validators pass as in Phase 1. On Terje's PC (Windows 11, x64) both checks m
 - `scripts-mac/rancher-desktop/` → `scripts-mac/legacy/rancher-desktop/` (moved), new `scripts-mac/legacy/README.md`
 - New `scripts-mac/rancher-desktop-jamf/` (profile + README)
 - References in `docs/` and `project-client-provisioning.md`
+
+## Completion note
+
+- **Merged:** PR #18 at `64dc636`, after CI run 36125246196 had **completed** green on the PR head. ops-dev approved on urb-agents #1529.
+- **Proven on real hardware:** the already-installed path, on an Intune-managed Windows 11 PC.
+- **Never executed anywhere:**
+  - **the upgrade from an older Rancher**, which is the point of option A;
+  - the MSI download + SHA512 check;
+  - a clean install;
+  - the Windows 10 and ARM rejections (unit-tested only).
+
+  The upgrade path will first run on whichever PC Intune reaches first, unless Terje has it proven on a test PC before upload.
