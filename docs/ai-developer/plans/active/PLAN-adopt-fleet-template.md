@@ -149,22 +149,22 @@ returns only hits in `plans/completed/` and in this plan.
 
 ---
 
-## Phase 4: Plans folder, and land the handover investigation
+## Phase 4: Plans folder, and land the handover investigation — DONE
 
 ### Tasks
 
-- [ ] 4.1 Add `plans/active/README.md`, `plans/completed/README.md`, `plans/backlog/index.md`
+- [x] 4.1 Add `plans/active/README.md`, `plans/completed/README.md`, `plans/backlog/index.md`
       (rows: `INVESTIGATE-wsl-intune.md`, `INVESTIGATE-windows-one-script-install.md`) and
       `plans/backlog/1PRIORITY.md`, true as of the day this lands
-- [ ] 4.2 Land `plans/backlog/INVESTIGATE-windows-one-script-install.md` **from the comment on
+- [x] 4.2 Land `plans/backlog/INVESTIGATE-windows-one-script-install.md` **from the comment on
       #1492** (fetched fresh, not from any copy). Fix the IMPLEMENTATION RULES links to
       `../../WORKFLOW.md` / `../../PLANS.md`. Do not edit the author's text beyond that
-- [ ] 4.3 Add a clearly marked **"Untested claims"** section at the top of the landed file. It lists
+- [x] 4.3 Add a clearly marked **"Untested claims"** section at the top of the landed file. It lists
       every statement about managed Windows 11 + Intune and Jamf Macs that nobody has run: for
       example the winget Intune block, `wsl --install --no-distribution` behaviour, restart codes,
       Admin on Demand elevation, and the Rancher Desktop 1.24 Windows-11-only finding. Mark each
       one *vendor-documented* or *assumed*, and say that only Terje can arrange the test machines
-- [ ] 4.4 Note in both investigations how they overlap with `INVESTIGATE-wsl-intune.md`
+- [x] 4.4 Note in both investigations how they overlap with `INVESTIGATE-wsl-intune.md`
 
 ### Validation
 
