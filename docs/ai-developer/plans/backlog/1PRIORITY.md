@@ -31,15 +31,15 @@ Fleet work is on the bus in `terchris/urb-agents` —
 
 | What | Who | Since | Unblocks | Raised |
 |---|---|---|---|---|
-| Review of PLAN-rancher-124-and-host-checks: Q1 legacy scope, Q2 profile location, Q3 MSI hash check, Q4 drop part d | Terje | 2026-09-25 | All script work in the plan | review item |
-| Where the one script lives (this repo or devcontainer-toolbox), and how code is shared | Terje, with devcontainer-toolbox | 2026-09-25 | The Windows installer PLAN, and the command DCT shows users (#1505 point 3) | #1509 |
+| Review of PLAN-rancher-124-and-host-checks: Q1 legacy scope, Q2 profile location, Q3 MSI hash check, Q4 drop part d | Terje | 2026-09-25 | All script work in the plan | #1519 |
+| Which of the four asks to start: user-run script (also the faster test), end-user README, web page (`helpers-no/sovereignsky-site`), GitHub Actions `.intunewin` build and public release | Terje | 2026-09-25 | Everything after the plan review; the installer lives **here** (decided, #1509) | #1520 |
 | A **blank** Jamf Mac, for the clean-install path only. Deferred: Terje would have to ask the Jamf admin, and nothing needs it yet. **tecMacWork** (Jamf-managed, Rancher already installed) covers detection, second run, and parts a/d of #1510 | Terje / Jamf admin | 2026-09-25 | Proving the Mac clean-install path | #1510 |
 | DCT: release assets + `SHA256SUMS`, a pinned image, a disk-space figure, and the `devcontainer-init` behaviours moved into its script | devcontainer-toolbox | 2026-09-25 | Pinned, verified handover (#1505 points 2, 4) | #1505 |
 
 ## If Terje wants work started, these rank highest
 
 1. Part c (retire `devcontainer-init`): answered "later"; it waits on devcontainer-toolbox
-2. The one-script Windows installer PLAN, once its location is decided and a test machine exists
+2. The user-run Windows installer PLAN. Its location is decided (this repo, #1509), and the start waits on #1520
 
 When this file's one-liner changes, refresh `fleet/status/client-provisioning.md` with
 `urb publish-status --via-bus` (do not write that file by hand).

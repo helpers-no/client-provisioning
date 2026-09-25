@@ -52,6 +52,8 @@ gap will persist. Every claim below is one of:
 
 **Decided since landing:** Intel Macs are **out of scope**; Apple Silicon only (Terje, urb-agents #1511, 2026-09-25).
 
+**Decided since landing:** the user-run installer lives in **client-provisioning** (option A; Terje, urb-agents #1509, 2026-09-25). Terje also wants it to replace USB-stick testing as the faster test path (#1520).
+
 **Agreed with devcontainer-toolbox since landing (#1505, #1514):**
 - **macOS 13 (Ventura) or later** (vendor-documented, Rancher Desktop 1.24 page).
 - **8 GB memory / 4 CPUs are recommended**: warn, don't stop.
