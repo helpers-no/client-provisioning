@@ -130,16 +130,16 @@ Every section of the old README/WORKFLOW exists either in a template doc or in t
 
 ---
 
-## Phase 3: References, root files, cleanup
+## Phase 3: References, root files, cleanup — DONE
 
 ### Tasks
 
-- [ ] 3.1 Fix references to the old names: `docs/README.md:46`, `docs/QUICK-GIT.md:97`,
+- [x] 3.1 Fix references to the old names: `docs/README.md:46`, `docs/QUICK-GIT.md:97`,
       `docs/QUICK-START.md:165,228,229`, `docs/AI-SUPPORTED-DEVELOPMENT.md:9,129,130`. Completed
       plans are history and are **not** rewritten
-- [ ] 3.2 Add root `AGENTS.md`. Update root `CLAUDE.md`: keep the four key rules, add Start Here
+- [x] 3.2 Add root `AGENTS.md`. Update root `CLAUDE.md`: keep the four key rules, add Start Here
       pointing at `project-client-provisioning.md`, and add the fleet-bus paragraph (urb, no file bus)
-- [ ] 3.3 Re-check that issues #42–#60 on helpers-no/devcontainer-toolbox are all closed, record the
+- [x] 3.3 Re-check that issues #42–#60 on helpers-no/devcontainer-toolbox are all closed, record the
       draft → issue mapping below, then `git rm -r docs/ai-developer/devcontainer-toolbox-issues/`
 
 ### Validation
@@ -244,7 +244,23 @@ read *all* `project-*.md` files, so this is within the convention.
 meant for Docusaurus. Azure DevOps wiki shows frontmatter as a table at the top of the page. This is
 cosmetic, and the files stay identical to the template, so the template can be synced later.
 
-**devcontainer-toolbox-issues/ → issue mapping** (fill in 3.3).
+**devcontainer-toolbox-issues/ → issue mapping.** Re-checked on 2026-09-25 with `gh issue view` on
+helpers-no/devcontainer-toolbox #42–#60: every issue is CLOSED, and the PRs in that range are MERGED.
+Nothing was re-filed to the bus. All 11 drafts plus the folder README were deleted.
+
+| Draft | Issue | State |
+|---|---|---|
+| ISSUE-azure-devops-cli.md | #42 | closed |
+| ISSUE-machine-readable-tool-inventory.md | #43 | closed |
+| ISSUE-config-azure-devops.md | #44 | closed |
+| ISSUE-persist-claude-credentials.md | #46 | closed (fix PR #52 merged) |
+| ISSUE-lightweight-powershell.md | #47 | closed (PR #53 merged) |
+| ISSUE-azure-devops-pat-env.md | #48 | closed (PR #50 merged) |
+| ISSUE-vscode-devcontainers-extension.md | #49 | closed (PR #51 merged) |
+| ISSUE-update-upgrade-mechanism.md | #54 (see also #45) | closed (PR #56 merged) |
+| ISSUE-claude-credential-sync-migration-and-api-key.md | #58 | closed |
+| ISSUE-persist-github-cli-credentials.md | #59 | closed |
+| ISSUE-cmd-publish-github.md | #60 | closed |
 
 ## Files to Modify
 

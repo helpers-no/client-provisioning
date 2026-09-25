@@ -162,7 +162,7 @@ Our project URL: `https://dev.azure.com/YOUR-ORG/Azure`
 
 A devcontainer is a pre-configured development environment that runs inside a container. When you open this repo in VS Code, it automatically starts a container with all the tools you need — no manual installation required. Everyone gets the same environment.
 
-This repo uses the [Devcontainer Toolbox](ai-developer/DEVCONTAINER-TOOLBOX.md) — run `dev-env` to see what's installed, or `dev-setup` to install additional tools.
+This repo uses the [Devcontainer Toolbox](ai-developer/DEVCONTAINER.md) — run `dev-env` to see what's installed, or `dev-setup` to install additional tools.
 
 ---
 
@@ -225,5 +225,5 @@ Every script must follow the [script standard](SCRIPT-STANDARDS.md) (metadata, h
 - **Git commands** — quick reference: [QUICK-GIT.md](QUICK-GIT.md)
 - **Script standards** — every script must follow the [script standard](ai-developer/rules/script-standard.md)
 - **Ops workflow** — day-to-day guide: [OPS.md](OPS.md)
-- **Azure DevOps commands** — PRs, merging, work items: [Git Hosting Guide](ai-developer/GIT-HOSTING-AZURE-DEVOPS.md)
-- **Devcontainer tools** — discover and install tools: [Devcontainer Toolbox](ai-developer/DEVCONTAINER-TOOLBOX.md)
+- **Azure DevOps commands** — PRs, merging, work items: [Git Hosting Guide](ai-developer/AZURE-DEVOPS.md)
+- **Devcontainer tools** — discover and install tools: [Devcontainer Toolbox](ai-developer/DEVCONTAINER.md)
