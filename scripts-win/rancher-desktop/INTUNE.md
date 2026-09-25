@@ -47,7 +47,7 @@ Settings for creating the Win32 app in the Intune portal.
 | Run script as 32-bit process | No |
 | Enforce script signature check | No |
 
-The detection script checks for `Rancher Desktop.exe` in both the per-user path (`%LOCALAPPDATA%\Programs\Rancher Desktop\`) and the per-machine path (`%ProgramFiles%\Rancher Desktop\`). It is uploaded separately from the `.intunewin` package.
+The detection script checks for `Rancher Desktop.exe` in both the per-user path (`%LOCALAPPDATA%\Programs\Rancher Desktop\`) and the per-machine path (`%ProgramFiles%\Rancher Desktop\`). It is uploaded separately from the `.intunewin` package. **Since 0.3.0 it is version-aware:** an install older than 1.24.0 counts as *not detected*, so Intune runs `install.ps1`, which upgrades it in place. **When you upload a new `.intunewin`, upload the new `detect.ps1` too.** Otherwise Intune keeps the old rule and never upgrades anyone.
 
 ---
 
