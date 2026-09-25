@@ -131,12 +131,28 @@ The validators pass as in Phase 1. On Terje's PC (Windows 11, x64) both checks m
 - **0 artifacts uploaded.**
 - **Not covered:** the validator checks only top-level package scripts, so `tests/*.ps1` (including the new test) is not linted.
 
-## Phase 4: Test on real machines, then ship
+## Phase 4: Test on real machines, then ship — 4.1 PASSED (2026-09-25)
 
 ### Tasks
 
-- [ ] 4.1 **Terje's managed Windows PC** (not clean: Rancher 1.24.0 and WSL already there). Run `wsl2/install.ps1` (must pass its checks and detect the existing features) and `rancher-desktop/install.ps1` (must detect 1.24.0 and not reinstall it, or reinstall cleanly; record which). Follow the steps in `scripts-win/*/TESTING.md`. **This is a person at the keyboard, not me.**
-- [ ] 4.2 **tecMacWork**: nothing to run from this repo after Phase 3. The Jamf profile is tested by the Jamf manager on a Mac where Rancher has **not** been started yet. That Mac isn't available, so this stays **untested**
+- [x] 4.1 **Terje's managed Windows PC** (not clean: Rancher 1.24.0 and WSL already there). Run `wsl2/install.ps1` (must pass its checks and detect the existing features) and `rancher-desktop/install.ps1` (must detect 1.24.0 and not reinstall it, or reinstall cleanly; record which). Follow the steps in `scripts-win/*/TESTING.md`. **This is a person at the keyboard, not me.**
+- [x] 4.2 *(nothing to run; recorded as untested)* **tecMacWork**: nothing to run from this repo after Phase 3. The Jamf profile is tested by the Jamf manager on a Mac where Rancher has **not** been started yet. That Mac isn't available, so this stays **untested**
+**4.1 result** (urb-agents #1527; the log is not committed because it contains a username and machine name). It ran on an Intune-managed PC, fetching from the PR branch on GitHub with no USB stick:
+
+| Check | Result |
+|---|---|
+| Host | Windows build 26200, x64, Windows PowerShell **5.1**.26100 |
+| `wsl2/install.ps1` | build + x64 checks pass; features already enabled; exit 0 |
+| `rancher-desktop/detect.ps1` | **read 1.24.0 from the exe version info**, reported installed, exit 0 |
+| `rancher-desktop/install.ps1` | checks pass; already installed at 1.24.0, so **no upgrade attempted**; v19 profile written; backend ready in 42 s; `hello-world` OK; exit 0 |
+| `-ExecutionPolicy Bypass` | **not blocked** by policy on this PC |
+
+**Untested, and stays marked so:**
+- the upgrade from an older version;
+- the MSI download + SHA512 check;
+- a clean install;
+- the rejections on Windows 10 and ARM, which are unit-tested only.
+
 - [ ] 4.3 Ask on the bus before push, PR, merge, and building/uploading the `.intunewin`
 
 ---
