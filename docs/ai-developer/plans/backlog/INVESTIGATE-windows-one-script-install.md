@@ -50,6 +50,8 @@ gap will persist. Every claim below is one of:
 | Rancher per-user MSI (`MSIINSTALLPERUSER=1 WSLINSTALLED=1`) in user context, pinned 1.22.0, HKLM profile | Tested here (ops-deployed), `scripts-win/rancher-desktop/install.ps1:39,465` |
 | `wsl --install` fails as SYSTEM and works interactively with admin | Tested here (WSL was installed by hand on the test PC) plus WSL issues |
 
+**Decided since landing:** Intel Macs are **out of scope**; Apple Silicon only (Terje, urb-agents #1511, 2026-09-25).
+
 Minor correction from landing: the WSL "help wanted" note is in the root
 [`README.md`](../../../../README.md) ("Help wanted: Silent WSL2 install via Intune"), not in the
 `scripts-win/wsl2/` README.
