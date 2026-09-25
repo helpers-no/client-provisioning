@@ -64,7 +64,7 @@ Every script supports a help flag that shows usage, options, and metadata:
 
 ```bash
 # Bash
-bash scripts-mac/rancher-desktop/rancher-desktop-install.sh --help
+bash scripts-mac/devcontainer-toolbox/devcontainer-pull.sh --help
 
 # PowerShell
 pwsh scripts-win/rancher-desktop/install.ps1 -Help

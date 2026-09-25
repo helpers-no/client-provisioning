@@ -167,7 +167,7 @@ Tests three error scenarios:
 
 ## Troubleshooting
 
-**"Rancher Desktop is not installed"** — Install Rancher Desktop first. Use `sudo bash scripts-mac/rancher-desktop/rancher-desktop-install.sh` or install manually from [rancherdesktop.io](https://rancherdesktop.io/).
+**"Rancher Desktop is not installed"** — Install Rancher Desktop first. On a Jamf-managed Mac, install it from Jamf (Self Service); see [`scripts-mac/rancher-desktop-jamf/`](../rancher-desktop-jamf/README.md). Otherwise install it manually from [rancherdesktop.io](https://rancherdesktop.io/).
 
 **"Docker daemon is not running"** — Open Rancher Desktop and wait for it to finish starting. The Docker daemon takes a minute to be ready.
 

@@ -52,6 +52,6 @@ See `TESTING.md` for USB testing instructions.
 
 ## Related
 
-- `scripts-mac/rancher-desktop/` -- Mac equivalent (Jamf)
+- `scripts-mac/rancher-desktop-jamf/` -- Mac equivalent: Jamf installs Rancher Desktop natively with this deployment profile
 - `scripts-win/wsl2/` -- WSL2 prerequisite package
 - [PLAN-002-rancher-desktop.md](../../docs/ai-developer/plans/completed/PLAN-002-rancher-desktop.md) -- implementation plan (completed)

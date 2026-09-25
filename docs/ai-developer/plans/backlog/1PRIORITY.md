@@ -23,7 +23,7 @@ Fleet work is on the bus in `terchris/urb-agents` —
 
 | # | What | Why this one |
 |---|---|---|
-| **1** | [PLAN-rancher-124-and-host-checks](PLAN-rancher-124-and-host-checks.md) is **draft PR #18, with CI green** (validator 13/13, unit tests pass, builds OK), and now includes **upgrade in place** (Terje: A, #1522). **Terje's PC test passed (#1527).** Waiting on the merge ask (#1529); Terje then uploads to Intune | Approved shipping work; the Windows packages meet DCT's requirements |
+| **1** | [PLAN-rancher-124-and-host-checks](../active/PLAN-rancher-124-and-host-checks.md) is **draft PR #18, with CI green** (validator 13/13, unit tests pass, builds OK), and now includes **upgrade in place** (Terje: A, #1522). **Terje's PC test passed (#1527).** Waiting on the merge ask (#1529); Terje then uploads to Intune | Approved shipping work; the Windows packages meet DCT's requirements |
 | **2** | [INVESTIGATE-windows-one-script-install](INVESTIGATE-windows-one-script-install.md): desk work that needs no machine. Map each design step to the existing `scripts-win/` code, list what is reusable, and add the DCT handover contract (urb-agents #1505) to it | High priority (Terje). It can move before test machines exist, and the contract shapes the design |
 | **3** | Write the step-by-step test script for Terje's managed Windows PC. It is **not clean** (Rancher 1.24.0 and WSL already installed). Round 1 only reads the machine's state and changes nothing. Send it to terje as its own item | Terje offered the PC (#1512); a ready script keeps his machine time short |
 

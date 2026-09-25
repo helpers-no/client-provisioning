@@ -87,18 +87,28 @@ The validators pass as in Phase 1. On Terje's PC (Windows 11, x64) both checks m
 
 ---
 
-## Phase 3: Mac: Rancher scripts to legacy, Jamf profile in the repo (Q1, Q2)
+## Phase 3: Mac: Rancher scripts to legacy, Jamf profile in the repo (Q1, Q2) — DONE
 
 ### Tasks
 
-- [ ] 3.1 `git mv scripts-mac/rancher-desktop scripts-mac/legacy/rancher-desktop`. Add `scripts-mac/legacy/README.md`: "Replaced on 2026-09-25 by Jamf's native Rancher Desktop install with a deployment profile; kept for reference"
-- [ ] 3.2 Add `scripts-mac/rancher-desktop-jamf/io.rancherdesktop.profile.defaults.plist` (the file Terje gave the Jamf manager, verbatim) and a README: the preference domain, where macOS puts the file, and the "defaults apply only on first launch" caveat. Include the source-code lines checked in #1516
-- [ ] 3.3 Fix references (`docs/OPS.md`, `docs/README.md`, `docs/SCRIPT-STANDARDS.md`, `docs/AI-EXAMPLE-WORKFLOW.md`, `scripts-win/rancher-desktop/README.md`, `scripts-mac/devcontainer-toolbox/TESTING.md`), and the package table in `project-client-provisioning.md`
-- [ ] 3.4 Make sure `validate-bash.sh` still runs: either it skips `legacy/`, or the moved scripts still pass. Decide, and say which
+- [x] 3.1 `git mv scripts-mac/rancher-desktop scripts-mac/legacy/rancher-desktop`. Add `scripts-mac/legacy/README.md`: "Replaced on 2026-09-25 by Jamf's native Rancher Desktop install with a deployment profile; kept for reference"
+- [x] 3.2 Add `scripts-mac/rancher-desktop-jamf/io.rancherdesktop.profile.defaults.plist` (the file Terje gave the Jamf manager, verbatim) and a README: the preference domain, where macOS puts the file, and the "defaults apply only on first launch" caveat. Include the source-code lines checked in #1516
+- [x] 3.3 Fix references (`docs/OPS.md`, `docs/README.md`, `docs/SCRIPT-STANDARDS.md`, `docs/AI-EXAMPLE-WORKFLOW.md`, `scripts-win/rancher-desktop/README.md`, `scripts-mac/devcontainer-toolbox/TESTING.md`), and the package table in `project-client-provisioning.md`
+- [x] 3.4 Make sure `validate-bash.sh` still runs: either it skips `legacy/`, or the moved scripts still pass. Decide, and say which
 
 ### Validation
 
 `validate-bash.sh` exits 0, and the link check reports 0 broken links outside `plans/completed/`.
+
+**Results:**
+- `validate-bash.sh`: 3/3 pass. **3.4 decision: the default run skips `legacy/`**, because it only checks `.sh` at a package's top level. `validate-bash.sh legacy/rancher-desktop` still passes 4/4.
+- Link check: 0 broken.
+- The move is 22 renames (100 %), so history is kept.
+- `devcontainer-toolbox/tests/test-0-prerequisites.sh`: only its "install Rancher" hint changed (now points to Jamf / rancherdesktop.io). PATCH 0.2.1.
+
+**Found, not fixed (outside this plan):** `validate-bash.sh devcontainer-toolbox/tests` fails **8 of 9** on the `startup` check (`log_info "Starting: ..."` missing). It fails the same on `main` without this change.
+
+**Left as history:** `docs/AI-EXAMPLE-WORKFLOW.md:62` (an example transcript) and the author's text in `INVESTIGATE-windows-one-script-install.md:96`.
 
 ---
 
