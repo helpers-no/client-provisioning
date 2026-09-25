@@ -32,7 +32,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $SCRIPT_ID          = "rancher-desktop-detect"
 $SCRIPT_NAME        = "Rancher Desktop Detection"
-$SCRIPT_VER         = "0.2.1"
+$SCRIPT_VER         = "0.3.0"
 $SCRIPT_DESCRIPTION = "Intune detection script for Rancher Desktop (per-user install)."
 $SCRIPT_CATEGORY    = "DEPLOY"
 
@@ -41,6 +41,9 @@ $SCRIPT_CATEGORY    = "DEPLOY"
 #------------------------------------------------------------------------------
 
 $RANCHER_EXE          = "Rancher Desktop.exe"
+# Must equal $RANCHER_VERSION in install.ps1 (checked by tests/test-version-pin.ps1).
+# An older installed version counts as NOT detected, so Intune runs the upgrade.
+$MIN_RANCHER_VERSION  = "1.24.0"
 
 # The MSI installs to different paths depending on scope:
 #   Per-user:    %LOCALAPPDATA%\Programs\Rancher Desktop\
@@ -77,6 +80,8 @@ function Show-Help {
     Write-Host ""
     Write-Host "Detection logic:"
     Write-Host "  Checks for $RANCHER_EXE in known install paths"
+    Write-Host "  Installed version below $MIN_RANCHER_VERSION = not detected (Intune upgrades it)"
+    Write-Host "  Version unreadable = detected (avoids a reinstall loop)"
     Write-Host "  Output + exit 0 = detected (installed)"
     Write-Host "  No output + exit 0 = not detected (not installed)"
     Write-Host ""
@@ -91,6 +96,29 @@ if ($Help) {
 }
 
 #------------------------------------------------------------------------------
+# HELPER FUNCTIONS
+#------------------------------------------------------------------------------
+
+function Get-RancherVersion {
+    # Reads the version of an installed Rancher Desktop from the exe's version info.
+    # Returns a [version], or $null when it cannot be read.
+    param([string]$InstallDir)
+    $exePath = Join-Path $InstallDir $RANCHER_EXE
+    try {
+        $info = (Get-Item -LiteralPath $exePath -ErrorAction Stop).VersionInfo
+        foreach ($raw in @($info.ProductVersion, $info.FileVersion)) {
+            if ($raw -and ($raw -match '^\s*(\d+)\.(\d+)\.(\d+)')) {
+                return [version]"$($Matches[1]).$($Matches[2]).$($Matches[3])"
+            }
+        }
+    }
+    catch {
+        log_warning "Could not read the version of $exePath : $_"
+    }
+    return $null
+}
+
+#------------------------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------------------------
 
@@ -99,7 +127,16 @@ log_start
 foreach ($dir in $RANCHER_INSTALL_PATHS) {
     $exePath = Join-Path $dir $RANCHER_EXE
     if (Test-Path $exePath) {
-        Write-Output "Rancher Desktop installed at $dir"
+        $installed = Get-RancherVersion -InstallDir $dir
+        if ($installed -and $installed -lt [version]$MIN_RANCHER_VERSION) {
+            # No output = not detected: Intune will run install.ps1, which upgrades in place
+            log_info "Rancher Desktop $installed at $dir is older than $MIN_RANCHER_VERSION -- needs upgrade"
+            exit 0
+        }
+        if (-not $installed) {
+            log_warning "Version unreadable; reporting as installed to avoid a reinstall loop"
+        }
+        Write-Output "Rancher Desktop $installed installed at $dir"
         exit 0
     }
 }

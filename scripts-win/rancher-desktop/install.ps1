@@ -28,7 +28,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $SCRIPT_ID          = "rancher-desktop-install"
 $SCRIPT_NAME        = "Rancher Desktop Installer"
-$SCRIPT_VER         = "0.2.0"
+$SCRIPT_VER         = "0.3.0"
 $SCRIPT_DESCRIPTION = "Downloads and installs Rancher Desktop on Windows via MSI (per-user)."
 $SCRIPT_CATEGORY    = "DEPLOY"
 
@@ -36,10 +36,12 @@ $SCRIPT_CATEGORY    = "DEPLOY"
 # CONFIGURATION
 #------------------------------------------------------------------------------
 
-$RANCHER_VERSION      = "1.22.0"
+$RANCHER_VERSION      = "1.24.0"
 $RANCHER_BASE_URL     = "https://github.com/rancher-sandbox/rancher-desktop/releases/download"
 $RANCHER_MSI_NAME     = "Rancher.Desktop.Setup.$RANCHER_VERSION.msi"
 $RANCHER_DOWNLOAD_URL = "$RANCHER_BASE_URL/v$RANCHER_VERSION/$RANCHER_MSI_NAME"
+# Rancher publishes a SHA512 checksum beside every release asset
+$RANCHER_SHA512_URL   = "$RANCHER_DOWNLOAD_URL.sha512sum"
 $RANCHER_EXE          = "Rancher Desktop.exe"
 
 # The MSI installs to different paths depending on scope:
@@ -61,12 +63,13 @@ $MIN_DISK_SPACE_GB    = 2
 $DOWNLOAD_TIMEOUT_SEC  = 1800
 $DOWNLOAD_PROGRESS_SEC = 10
 $DOWNLOAD_MIN_SIZE     = 100MB
+$MIN_BUILD             = 22000   # Windows 11 (Rancher Desktop 1.24 requires it)
 
 # Deployment profile -- written to HKLM registry (requires admin).
 # "defaults" profile applies on first launch only. The user can change
 # settings afterwards (including enabling Kubernetes).
 $PROFILE_REG_PATH       = "HKLM:\SOFTWARE\Policies\Rancher Desktop\defaults"
-$PROFILE_VERSION        = 17
+$PROFILE_VERSION        = 19
 $PROFILE_CONTAINER_ENGINE = "moby"
 $PROFILE_KUBERNETES     = $false
 
@@ -112,8 +115,13 @@ function Show-Help {
     Write-Host "  -Help     Show this help message"
     Write-Host ""
     Write-Host "Prerequisites:"
+    Write-Host "  Windows 11 (build 22000 or later) on an x64 PC"
     Write-Host "  WSL2 must be installed (features enabled + kernel)"
     Write-Host "  Internet access (downloads ~500 MB MSI)"
+    Write-Host ""
+    Write-Host "Security:"
+    Write-Host "  The MSI is checked against the SHA512 checksum Rancher publishes."
+    Write-Host "  On a mismatch the install stops before msiexec runs."
     Write-Host ""
     Write-Host "Metadata:"
     Write-Host "  ID:       $SCRIPT_ID"
@@ -128,6 +136,77 @@ if ($Help) {
 #------------------------------------------------------------------------------
 # HELPER FUNCTIONS
 #------------------------------------------------------------------------------
+
+function Get-HostArchitecture {
+    # Win32_Processor reports the real CPU, even when an x64 PowerShell runs
+    # under emulation on an ARM64 PC (where PROCESSOR_ARCHITECTURE says AMD64).
+    # Architecture codes: 9 = x64, 12 = ARM64, 0 = x86, 5 = ARM
+    try {
+        $cpu = Get-CimInstance -ClassName Win32_Processor -ErrorAction Stop | Select-Object -First 1
+        switch ([int]$cpu.Architecture) {
+            9       { return "x64" }
+            12      { return "ARM64" }
+            0       { return "x86" }
+            5       { return "ARM" }
+            default { return "unknown($($cpu.Architecture))" }
+        }
+    }
+    catch {
+        $arch = $env:PROCESSOR_ARCHITEW6432
+        if (-not $arch) { $arch = $env:PROCESSOR_ARCHITECTURE }
+        if ($arch -eq "AMD64") { return "x64" }
+        return $arch
+    }
+}
+
+function Test-HostPlatform {
+    # Returns $true when the PC is Windows 11 (build >= $MinBuild) on x64.
+    # Parameters let the tests pass fake values.
+    param(
+        [int]$Build = [System.Environment]::OSVersion.Version.Build,
+        [string]$Architecture = (Get-HostArchitecture),
+        [int]$MinBuild = $MIN_BUILD,
+        [string]$BuildCode = "ERR010",
+        [string]$ArchCode = "ERR011"
+    )
+    $ok = $true
+    if ($Build -lt $MinBuild) {
+        log_error "${BuildCode}: This PC runs Windows build $Build. Windows 11 is required."
+        log_error "${BuildCode}: Rancher Desktop 1.24 does not support Windows 10 (minimum build: $MinBuild)"
+        $ok = $false
+    }
+    else {
+        log_success "Windows build $Build meets minimum ($MinBuild, Windows 11)"
+    }
+    if ($Architecture -ne "x64") {
+        log_error "${ArchCode}: This PC has an $Architecture processor. Only x64 PCs are supported."
+        log_error "${ArchCode}: The Rancher Desktop installer is available for x64 only"
+        $ok = $false
+    }
+    else {
+        log_success "Processor architecture is x64"
+    }
+    return $ok
+}
+
+function Get-RancherVersion {
+    # Reads the version of an installed Rancher Desktop from the exe's version info.
+    # Returns a [version], or $null when it cannot be read.
+    param([string]$InstallDir)
+    $exePath = Join-Path $InstallDir $RANCHER_EXE
+    try {
+        $info = (Get-Item -LiteralPath $exePath -ErrorAction Stop).VersionInfo
+        foreach ($raw in @($info.ProductVersion, $info.FileVersion)) {
+            if ($raw -and ($raw -match '^\s*(\d+)\.(\d+)\.(\d+)')) {
+                return [version]"$($Matches[1]).$($Matches[2]).$($Matches[3])"
+            }
+        }
+    }
+    catch {
+        log_warning "Could not read the version of $exePath : $_"
+    }
+    return $null
+}
 
 function Test-RancherInstalled {
     foreach ($dir in $RANCHER_INSTALL_PATHS) {
@@ -457,6 +536,42 @@ function Get-RancherMsi {
     return $msiPath
 }
 
+function Test-MsiChecksum {
+    param([string]$MsiPath)
+
+    log_info "Verifying SHA512 checksum..."
+    log_info "Checksum URL: $RANCHER_SHA512_URL"
+
+    # The .sha512sum file is small: "<hash>  <filename>"
+    try {
+        $sumText = (Invoke-WebRequest -Uri $RANCHER_SHA512_URL -UseBasicParsing -TimeoutSec 60).Content
+        if ($sumText -is [byte[]]) { $sumText = [System.Text.Encoding]::ASCII.GetString($sumText) }
+    }
+    catch {
+        log_error "ERR009: Cannot download the checksum file: $_"
+        log_error "ERR009: The MSI cannot be verified, so it will not be installed"
+        return $false
+    }
+
+    $expected = ($sumText.Trim() -split '\s+')[0].ToLower()
+    if ($expected -notmatch '^[0-9a-f]{128}$') {
+        log_error "ERR009: The checksum file does not contain a SHA512 hash"
+        log_error "ERR009: The MSI cannot be verified, so it will not be installed"
+        return $false
+    }
+
+    $actual = (Get-FileHash -Path $MsiPath -Algorithm SHA512).Hash.ToLower()
+    if ($actual -ne $expected) {
+        log_error "ERR009: The downloaded MSI does not match Rancher's published checksum"
+        log_error "ERR009: Expected: $expected"
+        log_error "ERR009: Got:      $actual"
+        return $false
+    }
+
+    log_success "Checksum verified (SHA512)"
+    return $true
+}
+
 function Install-RancherMsi {
     param([string]$MsiPath)
 
@@ -703,20 +818,54 @@ log_start
 log_info "  Version: $RANCHER_VERSION"
 log_info "  Checking paths: $($RANCHER_INSTALL_PATHS -join ', ')"
 
+# --- Prerequisite: Windows 11 on x64 (checked before anything changes) ---
+if (-not (Test-HostPlatform)) {
+    log_error "This PC cannot run Rancher Desktop $RANCHER_VERSION. Nothing was changed."
+    exit 1
+}
+
 # --- Check if already installed ---
 $existingDir = Test-RancherInstalled
 if ($existingDir) {
-    log_info "Rancher Desktop is already installed at $existingDir"
+    $installedVersion = Get-RancherVersion -InstallDir $existingDir
+    log_info "Rancher Desktop $installedVersion is already installed at $existingDir"
 
-    # Remove leftover settings so the defaults profile takes effect on next launch.
-    # Without this, stale settings.json (e.g. virtualMachine.type=qemu from a
-    # macOS-oriented config) overrides the registry defaults profile silently.
-    foreach ($dataDir in $RANCHER_USER_DATA_PATHS) {
-        $settingsFile = Join-Path $dataDir "settings.json"
-        if (Test-Path $settingsFile) {
-            log_info "Removing leftover settings: $settingsFile"
-            Remove-Item $settingsFile -Force -ErrorAction SilentlyContinue
+    # The user's settings.json is kept (Terje, urb-agents #1522, option A).
+    # The defaults profile only matters on a first install; after that the
+    # user's own choices (Kubernetes, memory) win.
+
+    # Stop any existing instances before upgrading or launching
+    $existing = Get-Process -Name $RANCHER_PROCESS -ErrorAction SilentlyContinue
+    if ($existing) {
+        log_info "Rancher Desktop is already running, stopping it first..."
+        $existing | Stop-Process -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 3
+    }
+
+    # --- Upgrade in place when older than the pin ---
+    if ($installedVersion -and $installedVersion -lt [version]$RANCHER_VERSION) {
+        log_info "Upgrading Rancher Desktop $installedVersion -> $RANCHER_VERSION"
+        if (-not (Test-InternetAccess)) {
+            log_error "No internet access. Cannot download the upgrade."
+            exit 1
         }
+        if (-not (Test-DiskSpace)) {
+            log_error "Not enough disk space. Cannot upgrade Rancher Desktop."
+            exit 1
+        }
+        $msiPath = Get-RancherMsi
+        if (-not (Test-MsiChecksum -MsiPath $msiPath)) {
+            Remove-Item $msiPath -Force -ErrorAction SilentlyContinue
+            exit 1
+        }
+        Install-RancherMsi -MsiPath $msiPath
+        Remove-Item $msiPath -Force -ErrorAction SilentlyContinue
+        $existingDir = Test-RancherInstalled
+        $upgradedVersion = Get-RancherVersion -InstallDir $existingDir
+        log_success "Upgraded: Rancher Desktop is now $upgradedVersion"
+    }
+    elseif (-not $installedVersion) {
+        log_warning "Could not read the installed version; not upgrading"
     }
 
     log_info "Updating deployment profile and running verification..."
@@ -724,14 +873,6 @@ if ($existingDir) {
 
     # --- Verification (same as fresh install) ---
     $verifyFailed = $false
-
-    # Stop any existing instances before launching
-    $existing = Get-Process -Name $RANCHER_PROCESS -ErrorAction SilentlyContinue
-    if ($existing) {
-        log_info "Rancher Desktop is already running, stopping it first..."
-        $existing | Stop-Process -Force -ErrorAction SilentlyContinue
-        Start-Sleep -Seconds 3
-    }
 
     log_info "Launching Rancher Desktop for verification..."
     try {
@@ -758,7 +899,7 @@ if ($existingDir) {
         exit 1
     }
 
-    log_success "Already installed and verified -- Rancher Desktop is working"
+    log_success "Installed and verified -- Rancher Desktop is working"
     exit 0
 }
 
@@ -789,6 +930,12 @@ Write-Host ""
 
 # --- Download the MSI ---
 $msiPath = Get-RancherMsi
+
+# --- Verify the download before anything runs elevated ---
+if (-not (Test-MsiChecksum -MsiPath $msiPath)) {
+    Remove-Item $msiPath -Force -ErrorAction SilentlyContinue
+    exit 1
+}
 
 # --- Install ---
 Install-RancherMsi -MsiPath $msiPath

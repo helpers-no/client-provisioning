@@ -67,7 +67,8 @@ Windows requires an extra step because WSL2 must be enabled before Rancher Deskt
 
 | Package | Description | Docs |
 |---------|-------------|------|
-| `scripts-mac/rancher-desktop/` | Rancher Desktop install, uninstall, and configuration | [README](../scripts-mac/rancher-desktop/README.md), [TESTING](../scripts-mac/rancher-desktop/TESTING.md) |
+| `scripts-mac/rancher-desktop-jamf/` | Rancher Desktop deployment profile for Jamf's native install (moby, Kubernetes off) | [README](../scripts-mac/rancher-desktop-jamf/README.md) |
+| `scripts-mac/legacy/rancher-desktop/` | **Legacy, not deployed.** The old install/config/uninstall scripts (Rancher 1.22.0), replaced by Jamf on 2026-09-25 | [README](../scripts-mac/legacy/README.md) |
 | `scripts-mac/devcontainer-toolbox/` | Install and configure the devcontainer toolbox on Mac machines | [README](../scripts-mac/devcontainer-toolbox/README.md) |
 | `scripts-mac/urbalurba-infrastructure-stack/` | Infrastructure stack setup (planned) | — |
 

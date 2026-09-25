@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>version</key>
+    <integer>19</integer>
+    <key>containerEngine</key>
+    <dict>
+        <key>name</key>
+        <string>moby</string>
+    </dict>
+    <key>kubernetes</key>
+    <dict>
+        <key>enabled</key>
+        <false/>
+    </dict>
+</dict>
+</plist>

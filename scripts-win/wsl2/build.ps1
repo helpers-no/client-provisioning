@@ -27,7 +27,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $SCRIPT_ID          = "wsl2-build"
 $SCRIPT_NAME        = "WSL2 Package Builder"
-$SCRIPT_VER         = "0.2.0"
+$SCRIPT_VER         = "0.3.0"
 $SCRIPT_DESCRIPTION = "Creates the .intunewin package for the WSL2 deployment."
 $SCRIPT_CATEGORY    = "DEVOPS"
 

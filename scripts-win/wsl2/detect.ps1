@@ -31,7 +31,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $SCRIPT_ID          = "wsl2-detect"
 $SCRIPT_NAME        = "WSL2 Detection Script"
-$SCRIPT_VER         = "0.2.1"
+$SCRIPT_VER         = "0.3.0"
 $SCRIPT_DESCRIPTION = "Intune detection script for WSL2 features."
 $SCRIPT_CATEGORY    = "DEPLOY"
 

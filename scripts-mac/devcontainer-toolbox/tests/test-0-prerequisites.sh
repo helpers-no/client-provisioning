@@ -21,7 +21,7 @@ set -uo pipefail
 
 SCRIPT_ID="test-0-prerequisites"
 SCRIPT_NAME="Test 0: Prerequisites"
-SCRIPT_VER="0.2.0"
+SCRIPT_VER="0.2.1"
 SCRIPT_DESCRIPTION="Verify Rancher Desktop is installed and Docker is running."
 SCRIPT_CATEGORY="DEVOPS"
 
@@ -94,7 +94,8 @@ if [ -d "$APP_PATH" ]; then
 else
     log_error "Rancher Desktop is not installed at ${APP_PATH}"
     log_info "Install Rancher Desktop first:"
-    log_info "  sudo bash scripts-mac/rancher-desktop/rancher-desktop-install.sh"
+    log_info "  Jamf-managed Mac: install it from Jamf (Self Service)"
+    log_info "  Otherwise: download it from https://rancherdesktop.io/"
     test_ok=false
 fi
 

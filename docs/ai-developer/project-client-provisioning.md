@@ -41,7 +41,8 @@ deployment scripts with a README and a `tests/` folder.
 
 | Package | Platform | Scripts | Tests |
 |---|---|---|---|
-| `rancher-desktop/` | mac | 4 | 14 |
+| `rancher-desktop-jamf/` | mac | — (Jamf deployment profile, no scripts) | — |
+| `legacy/rancher-desktop/` | mac | 4, **legacy, not deployed** (replaced by Jamf, 2026-09-25) | 14 |
 | `devcontainer-toolbox/` | mac | 3 | 9 |
 | `urbalurba-infrastructure-stack/` | mac | — | — (planned, not started) |
 | `rancher-desktop/` | win | 4 | 4 |

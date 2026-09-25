@@ -129,7 +129,7 @@ The validators check every script for:
 
 Fix any failures before continuing.
 
-Some packages also have their own test suites. See [Rancher Desktop TESTING.md](../scripts-mac/rancher-desktop/TESTING.md) for Mac testing or [WSL2 TESTING.md](../scripts-win/wsl2/TESTING.md) for Windows USB testing.
+Some packages also have their own test suites. See [devcontainer-toolbox TESTING.md](../scripts-mac/devcontainer-toolbox/TESTING.md) for Mac testing or [WSL2 TESTING.md](../scripts-win/wsl2/TESTING.md) for Windows USB testing. (Rancher Desktop on the Mac is now installed by Jamf; see [rancher-desktop-jamf](../scripts-mac/rancher-desktop-jamf/README.md).)
 
 ### 4. Set the version (if releasing a new version)
 

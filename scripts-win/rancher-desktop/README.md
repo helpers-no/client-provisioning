@@ -4,16 +4,20 @@ Deploys Rancher Desktop on Windows via Intune as a Win32 app.
 
 ## What it does
 
-- Downloads the Rancher Desktop MSI from GitHub releases
+- Downloads the Rancher Desktop MSI (pinned to **1.24.0**) from GitHub releases
+- Verifies the MSI against the SHA512 checksum Rancher publishes beside it, and stops before `msiexec` on a mismatch (ERR009)
 - Installs silently in per-user mode (`MSIINSTALLPERUSER=1`)
 - Skips built-in WSL check (`WSLINSTALLED=1`) -- WSL2 is deployed separately
-- Deploys a defaults profile (container engine: moby, Kubernetes: off) to skip the first-run wizard
+- Deploys a defaults profile (settings version 19, container engine: moby, Kubernetes: off) to skip the first-run wizard
+- **Already installed and older than 1.24.0:** upgrades in place with the same verified MSI. `detect.ps1` reports an older version as *not detected*, so Intune runs the package
+- **Already installed:** keeps the user's `settings.json`. The defaults profile only matters on a first install
 - Launches Rancher Desktop and verifies backend readiness via `rdctl`
 - Runs `docker run --rm hello-world` to confirm Docker works
 - Shuts down cleanly -- exits 1 if any step fails so Intune retries
 
 ## Prerequisites
 
+- **Windows 11 (build 22000+) on an x64 PC.** The script stops with a plain message on Windows 10 or ARM (ERR010, ERR011) before changing anything
 - WSL2 must be installed (see `scripts-win/wsl2/`)
 - Internet access (downloads ~500 MB MSI at install time)
 
@@ -50,6 +54,6 @@ See `TESTING.md` for USB testing instructions.
 
 ## Related
 
-- `scripts-mac/rancher-desktop/` -- Mac equivalent (Jamf)
+- `scripts-mac/rancher-desktop-jamf/` -- Mac equivalent: Jamf installs Rancher Desktop natively with this deployment profile
 - `scripts-win/wsl2/` -- WSL2 prerequisite package
 - [PLAN-002-rancher-desktop.md](../../docs/ai-developer/plans/completed/PLAN-002-rancher-desktop.md) -- implementation plan (completed)

@@ -35,7 +35,7 @@ $SCRIPT_CATEGORY    = "TEST"
 # CONFIGURATION
 #------------------------------------------------------------------------------
 
-$MIN_BUILD          = 19041
+$MIN_BUILD          = 22000   # Windows 11, same as install.ps1
 
 #------------------------------------------------------------------------------
 # LOGGING
@@ -95,7 +95,7 @@ $build = [System.Environment]::OSVersion.Version.Build
 if ($build -ge $MIN_BUILD) {
     Test-Pass "Windows build $build (minimum: $MIN_BUILD)"
 } else {
-    Test-Fail "Windows build $build (minimum: $MIN_BUILD)" "WSL2 requires Windows 10 version 2004 or later"
+    Test-Fail "Windows build $build (minimum: $MIN_BUILD)" "Windows 11 is required (Rancher Desktop 1.24)"
 }
 
 # --- Test: Virtualization ---
