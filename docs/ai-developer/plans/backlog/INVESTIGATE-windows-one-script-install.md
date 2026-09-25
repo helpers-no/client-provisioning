@@ -63,6 +63,15 @@ gap will persist. Every claim below is one of:
 
 These checks are part d of #1510 and wait on Terje's go.
 
+**Scope agreed with devcontainer-toolbox (urb-agents #1533, 2026-09-25): VS Code + the Dev Containers extension are this repo's to install.** Neither platform has a package for them today. The installer must:
+- **Detect VS Code before installing it.** Managed PCs and Macs already get VS Code from Intune Company Portal / Jamf Self Service (`docs/OPS.md`), so a second copy must not be installed. Check both system and user installs, and find `code` on PATH or in the known install folders.
+- **Install VS Code only when missing**, per user where possible. The Windows user installer needs no admin (vendor-documented, not tested). **No winget dependency**, because winget may be disabled by policy (see the Findings above).
+- **Always make sure the extension is there**, as the user and not elevated: `code --install-extension ms-vscode-remote.remote-containers`. Detect it with `code --list-extensions`. DCT's host-side `.vscode/extensions.json` only *prompts*; it doesn't install.
+- **Do it before the final step**, which opens VS Code in the folder.
+- **No separate Intune/Jamf package for VS Code.** The organisations already deploy it; this is about the user-run installer.
+
+Also found: `docs/OPS.md:13` says the extension "is installed automatically" from `.vscode/extensions.json`. It is a recommendation prompt the user must accept. That's a doc fix, filed as a follow-up.
+
 Minor correction from landing: the WSL "help wanted" note is in the root
 [`README.md`](../../../../README.md) ("Help wanted: Silent WSL2 install via Intune"), not in the
 `scripts-win/wsl2/` README.
