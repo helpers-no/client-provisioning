@@ -52,6 +52,15 @@ gap will persist. Every claim below is one of:
 
 **Decided since landing:** Intel Macs are **out of scope**; Apple Silicon only (Terje, urb-agents #1511, 2026-09-25).
 
+**Agreed with devcontainer-toolbox since landing (#1505, #1514):**
+- **macOS 13 (Ventura) or later** (vendor-documented, Rancher Desktop 1.24 page).
+- **8 GB memory / 4 CPUs are recommended**: warn, don't stop.
+- Both scripts use the same user sentences:
+  - Intel: "This Mac has an Intel processor. Only Apple Silicon Macs (M1 or later) are supported."
+  - Too old: "This Mac runs macOS <version>. macOS 13 (Ventura) or later is required."
+
+These checks are part d of #1510 and wait on Terje's go.
+
 Minor correction from landing: the WSL "help wanted" note is in the root
 [`README.md`](../../../../README.md) ("Help wanted: Silent WSL2 install via Intune"), not in the
 `scripts-win/wsl2/` README.
