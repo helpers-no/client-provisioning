@@ -112,6 +112,17 @@ The validators pass as in Phase 1. On Terje's PC (Windows 11, x64) both checks m
 
 ---
 
+## Phase 1b: Upgrade existing PCs (Terje: option A, urb-agents #1522) — DONE, CI pending
+
+- [x] 1b.1 `detect.ps1`: an installed version below `$MIN_RANCHER_VERSION` (1.24.0) = **not detected**, so Intune runs install. **Version unreadable = detected**, to avoid a reinstall loop
+- [x] 1b.2 `install.ps1`, already-installed branch: if the version is older than the pin, stop Rancher, check internet and disk, then download → **SHA512 check** → `msiexec` over the top. Then verify as before
+- [x] 1b.3 **Removed the `settings.json` deletion** in the already-installed branch, so user choices survive re-runs and upgrades. The deletion **in the fresh-install branch is kept**: when Rancher isn't installed, leftover settings from an old uninstall are stale
+- [x] 1b.4 `tests/test-version-pin.ps1` fails if `detect.ps1` and `install.ps1` pin different versions. It is in CI
+
+**Untested, and to check on Terje's PC:**
+- **Where the version comes from:** the exe's `ProductVersion`, then `FileVersion`. I haven't seen what Rancher's Electron build puts there. The test log will show it.
+- **The MSI upgrade over an existing per-user install:** not tried anywhere. His PC is already on 1.24.0, so it takes the no-upgrade path.
+
 ## CI result (PR #18, run 36121710567, 2026-09-25)
 
 - **`validate-powershell.sh`:** 13/13, with PSScriptAnalyzer found.

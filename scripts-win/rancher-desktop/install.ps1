@@ -189,6 +189,25 @@ function Test-HostPlatform {
     return $ok
 }
 
+function Get-RancherVersion {
+    # Reads the version of an installed Rancher Desktop from the exe's version info.
+    # Returns a [version], or $null when it cannot be read.
+    param([string]$InstallDir)
+    $exePath = Join-Path $InstallDir $RANCHER_EXE
+    try {
+        $info = (Get-Item -LiteralPath $exePath -ErrorAction Stop).VersionInfo
+        foreach ($raw in @($info.ProductVersion, $info.FileVersion)) {
+            if ($raw -and ($raw -match '^\s*(\d+)\.(\d+)\.(\d+)')) {
+                return [version]"$($Matches[1]).$($Matches[2]).$($Matches[3])"
+            }
+        }
+    }
+    catch {
+        log_warning "Could not read the version of $exePath : $_"
+    }
+    return $null
+}
+
 function Test-RancherInstalled {
     foreach ($dir in $RANCHER_INSTALL_PATHS) {
         $exePath = Join-Path $dir $RANCHER_EXE
@@ -808,17 +827,45 @@ if (-not (Test-HostPlatform)) {
 # --- Check if already installed ---
 $existingDir = Test-RancherInstalled
 if ($existingDir) {
-    log_info "Rancher Desktop is already installed at $existingDir"
+    $installedVersion = Get-RancherVersion -InstallDir $existingDir
+    log_info "Rancher Desktop $installedVersion is already installed at $existingDir"
 
-    # Remove leftover settings so the defaults profile takes effect on next launch.
-    # Without this, stale settings.json (e.g. virtualMachine.type=qemu from a
-    # macOS-oriented config) overrides the registry defaults profile silently.
-    foreach ($dataDir in $RANCHER_USER_DATA_PATHS) {
-        $settingsFile = Join-Path $dataDir "settings.json"
-        if (Test-Path $settingsFile) {
-            log_info "Removing leftover settings: $settingsFile"
-            Remove-Item $settingsFile -Force -ErrorAction SilentlyContinue
+    # The user's settings.json is kept (Terje, urb-agents #1522, option A).
+    # The defaults profile only matters on a first install; after that the
+    # user's own choices (Kubernetes, memory) win.
+
+    # Stop any existing instances before upgrading or launching
+    $existing = Get-Process -Name $RANCHER_PROCESS -ErrorAction SilentlyContinue
+    if ($existing) {
+        log_info "Rancher Desktop is already running, stopping it first..."
+        $existing | Stop-Process -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 3
+    }
+
+    # --- Upgrade in place when older than the pin ---
+    if ($installedVersion -and $installedVersion -lt [version]$RANCHER_VERSION) {
+        log_info "Upgrading Rancher Desktop $installedVersion -> $RANCHER_VERSION"
+        if (-not (Test-InternetAccess)) {
+            log_error "No internet access. Cannot download the upgrade."
+            exit 1
         }
+        if (-not (Test-DiskSpace)) {
+            log_error "Not enough disk space. Cannot upgrade Rancher Desktop."
+            exit 1
+        }
+        $msiPath = Get-RancherMsi
+        if (-not (Test-MsiChecksum -MsiPath $msiPath)) {
+            Remove-Item $msiPath -Force -ErrorAction SilentlyContinue
+            exit 1
+        }
+        Install-RancherMsi -MsiPath $msiPath
+        Remove-Item $msiPath -Force -ErrorAction SilentlyContinue
+        $existingDir = Test-RancherInstalled
+        $upgradedVersion = Get-RancherVersion -InstallDir $existingDir
+        log_success "Upgraded: Rancher Desktop is now $upgradedVersion"
+    }
+    elseif (-not $installedVersion) {
+        log_warning "Could not read the installed version; not upgrading"
     }
 
     log_info "Updating deployment profile and running verification..."
@@ -826,14 +873,6 @@ if ($existingDir) {
 
     # --- Verification (same as fresh install) ---
     $verifyFailed = $false
-
-    # Stop any existing instances before launching
-    $existing = Get-Process -Name $RANCHER_PROCESS -ErrorAction SilentlyContinue
-    if ($existing) {
-        log_info "Rancher Desktop is already running, stopping it first..."
-        $existing | Stop-Process -Force -ErrorAction SilentlyContinue
-        Start-Sleep -Seconds 3
-    }
 
     log_info "Launching Rancher Desktop for verification..."
     try {
@@ -860,7 +899,7 @@ if ($existingDir) {
         exit 1
     }
 
-    log_success "Already installed and verified -- Rancher Desktop is working"
+    log_success "Installed and verified -- Rancher Desktop is working"
     exit 0
 }
 
