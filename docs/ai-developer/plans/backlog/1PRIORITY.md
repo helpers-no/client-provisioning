@@ -32,7 +32,7 @@ Fleet work is on the bus in `terchris/urb-agents` —
 |---|---|---|---|---|
 | Where the one script lives (this repo or devcontainer-toolbox), and how code is shared | Terje, with devcontainer-toolbox | 2026-09-25 | The Windows installer PLAN, and the command DCT shows users (#1505 point 3) | #1509 |
 | Go for the script changes: Windows 11 build ≥ 22000 + x64 checks, Rancher 1.22.0 → 1.24.0 (win + mac), `devcontainer-init` calling DCT's script, Apple Silicon check on mac (Intel out of scope, decided on #1511) | Terje | 2026-09-25 | Meeting DCT's host requirements (#1505 points 1, 4) | #1510 |
-| A Jamf Mac to test on (only needed when the Mac work starts) | Terje | 2026-09-25 | The Mac side of the investigation | #1512 (Windows half answered) |
+| A **blank** Jamf Mac, for the clean-install path only. Deferred: Terje would have to ask the Jamf admin, and nothing needs it yet. **tecMacWork** (Jamf-managed, Rancher already installed) covers detection, second run, and parts a/d of #1510 | Terje / Jamf admin | 2026-09-25 | Proving the Mac clean-install path | #1510 |
 | DCT: release assets + `SHA256SUMS`, a pinned image, a disk-space figure, and the `devcontainer-init` behaviours moved into its script | devcontainer-toolbox | 2026-09-25 | Pinned, verified handover (#1505 points 2, 4) | #1505 |
 
 ## If Terje wants work started, these rank highest
