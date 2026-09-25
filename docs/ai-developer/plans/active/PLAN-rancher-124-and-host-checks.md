@@ -11,7 +11,9 @@ Bring the Windows packages up to devcontainer-toolbox's host requirements, and r
 >
 > **UPDATE THIS PLAN AS YOU WORK:** Mark tasks `[x]` when done, add `— DONE` to phase headers, update status.
 
-## Status: Backlog — waiting for Terje's review
+## Status: Active
+
+**Terje's answers (urb-agents #1519, 2026-09-25):** Q1 yes, Q2 yes, Q3 yes, Q4 drop.
 
 **Source:** urb-agents #1510 (Terje: "a yes, b yes"), #1516 (Jamf profile, "move our old setup to legacy"), #1505 / #1514 (DCT host requirements).
 
@@ -32,19 +34,32 @@ Bring the Windows packages up to devcontainer-toolbox's host requirements, and r
 
 ---
 
-## Phase 1: Windows: Rancher Desktop 1.22.0 → 1.24.0 (part a)
+## Phase 1: Windows: Rancher Desktop 1.22.0 → 1.24.0 (part a) — DONE (not yet validated with pwsh)
 
 ### Tasks
 
-- [ ] 1.1 `scripts-win/rancher-desktop/install.ps1:39`: `$RANCHER_VERSION = "1.24.0"`. The asset name is unchanged in the 1.24.0 release (`Rancher.Desktop.Setup.1.24.0.msi`, checked 2026-09-25)
-- [ ] 1.2 `install.ps1:69`: `$PROFILE_VERSION` 17 → **19**, matching `CURRENT_SETTINGS_VERSION` in Rancher v1.24.0 (`pkg/rancher-desktop/config/settings.ts:9`). An older number would still be migrated, but the right number avoids depending on that
-- [ ] 1.3 *(only if Q3 = yes)*: download `<msi>.sha512sum` beside the MSI, compare it with `Get-FileHash -Algorithm SHA512`, and stop before `msiexec` on a mismatch, with a new `ERRnnn` and a plain sentence
-- [ ] 1.4 Update `scripts-win/rancher-desktop/README.md` (version, and the hash check if added). Leave the example test logs as 1.22.0 history
-- [ ] 1.5 MINOR version bump: `bash docs/ai-developer/tools/set-version-powershell.sh rancher-desktop`
+- [x] 1.1 `scripts-win/rancher-desktop/install.ps1:39`: `$RANCHER_VERSION = "1.24.0"`. The asset name is unchanged in the 1.24.0 release (`Rancher.Desktop.Setup.1.24.0.msi`, checked 2026-09-25)
+- [x] 1.2 `install.ps1:69`: `$PROFILE_VERSION` 17 → **19**, matching `CURRENT_SETTINGS_VERSION` in Rancher v1.24.0 (`pkg/rancher-desktop/config/settings.ts:9`). An older number would still be migrated, but the right number avoids depending on that
+- [x] 1.3 *(Q3 = yes)*: download `<msi>.sha512sum` beside the MSI, compare it with `Get-FileHash -Algorithm SHA512`, and stop before `msiexec` on a mismatch, with a new `ERRnnn` and a plain sentence
+- [x] 1.4 Update `scripts-win/rancher-desktop/README.md` (version, and the hash check if added). Leave the example test logs as 1.22.0 history
+- [x] 1.5 MINOR version bump: `bash docs/ai-developer/tools/set-version-powershell.sh rancher-desktop`
 
 ### Validation
 
-`bash docs/ai-developer/tools/validate-powershell.sh rancher-desktop` passes. **This needs `pwsh`, which is not on tecMacDev**, so run it in the devcontainer, or let CI run it (the pipeline validates `scripts-win/` on push to `main`).
+`bash docs/ai-developer/tools/validate-powershell.sh rancher-desktop` passes.
+
+**Result so far:** not run. There is no `pwsh` on tecMacDev. Checked by other means:
+- The file is pure ASCII (PowerShell 5.1 requirement).
+- The real `Rancher.Desktop.Setup.1.24.0.msi.sha512sum` has the format `<hash> *<file>`, which the parser handles. It is served as `application/octet-stream`, and the byte[] case is handled.
+- `SCRIPT_VER` was bumped to 0.3.0 by hand (the same regex as `set-version-powershell.sh`, whose GNU `sed -i` misbehaves on macOS).
+
+**Must pass in the devcontainer or CI before merge.**
+
+**Found while implementing — needs Terje:**
+- `detect.ps1` does not check the version, and `install.ps1`'s already-installed branch does not upgrade. So **the 1.24.0 pin only affects new installs**, and PCs already on 1.22.0 stay there.
+- The already-installed branch also **deletes the user's `settings.json`** so that the profile applies. On a re-run, that would wipe a UIS user's own Kubernetes and resource settings.
+
+Both are existing behaviour, not changed here. **This needs `pwsh`, which is not on tecMacDev**, so run it in the devcontainer, or let CI run it (the pipeline validates `scripts-win/` on push to `main`).
 
 ---
 

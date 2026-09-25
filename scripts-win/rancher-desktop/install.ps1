@@ -28,7 +28,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $SCRIPT_ID          = "rancher-desktop-install"
 $SCRIPT_NAME        = "Rancher Desktop Installer"
-$SCRIPT_VER         = "0.2.0"
+$SCRIPT_VER         = "0.3.0"
 $SCRIPT_DESCRIPTION = "Downloads and installs Rancher Desktop on Windows via MSI (per-user)."
 $SCRIPT_CATEGORY    = "DEPLOY"
 
@@ -36,10 +36,12 @@ $SCRIPT_CATEGORY    = "DEPLOY"
 # CONFIGURATION
 #------------------------------------------------------------------------------
 
-$RANCHER_VERSION      = "1.22.0"
+$RANCHER_VERSION      = "1.24.0"
 $RANCHER_BASE_URL     = "https://github.com/rancher-sandbox/rancher-desktop/releases/download"
 $RANCHER_MSI_NAME     = "Rancher.Desktop.Setup.$RANCHER_VERSION.msi"
 $RANCHER_DOWNLOAD_URL = "$RANCHER_BASE_URL/v$RANCHER_VERSION/$RANCHER_MSI_NAME"
+# Rancher publishes a SHA512 checksum beside every release asset
+$RANCHER_SHA512_URL   = "$RANCHER_DOWNLOAD_URL.sha512sum"
 $RANCHER_EXE          = "Rancher Desktop.exe"
 
 # The MSI installs to different paths depending on scope:
@@ -66,7 +68,7 @@ $DOWNLOAD_MIN_SIZE     = 100MB
 # "defaults" profile applies on first launch only. The user can change
 # settings afterwards (including enabling Kubernetes).
 $PROFILE_REG_PATH       = "HKLM:\SOFTWARE\Policies\Rancher Desktop\defaults"
-$PROFILE_VERSION        = 17
+$PROFILE_VERSION        = 19
 $PROFILE_CONTAINER_ENGINE = "moby"
 $PROFILE_KUBERNETES     = $false
 
@@ -114,6 +116,10 @@ function Show-Help {
     Write-Host "Prerequisites:"
     Write-Host "  WSL2 must be installed (features enabled + kernel)"
     Write-Host "  Internet access (downloads ~500 MB MSI)"
+    Write-Host ""
+    Write-Host "Security:"
+    Write-Host "  The MSI is checked against the SHA512 checksum Rancher publishes."
+    Write-Host "  On a mismatch the install stops before msiexec runs."
     Write-Host ""
     Write-Host "Metadata:"
     Write-Host "  ID:       $SCRIPT_ID"
@@ -457,6 +463,42 @@ function Get-RancherMsi {
     return $msiPath
 }
 
+function Test-MsiChecksum {
+    param([string]$MsiPath)
+
+    log_info "Verifying SHA512 checksum..."
+    log_info "Checksum URL: $RANCHER_SHA512_URL"
+
+    # The .sha512sum file is small: "<hash>  <filename>"
+    try {
+        $sumText = (Invoke-WebRequest -Uri $RANCHER_SHA512_URL -UseBasicParsing -TimeoutSec 60).Content
+        if ($sumText -is [byte[]]) { $sumText = [System.Text.Encoding]::ASCII.GetString($sumText) }
+    }
+    catch {
+        log_error "ERR009: Cannot download the checksum file: $_"
+        log_error "ERR009: The MSI cannot be verified, so it will not be installed"
+        return $false
+    }
+
+    $expected = ($sumText.Trim() -split '\s+')[0].ToLower()
+    if ($expected -notmatch '^[0-9a-f]{128}$') {
+        log_error "ERR009: The checksum file does not contain a SHA512 hash"
+        log_error "ERR009: The MSI cannot be verified, so it will not be installed"
+        return $false
+    }
+
+    $actual = (Get-FileHash -Path $MsiPath -Algorithm SHA512).Hash.ToLower()
+    if ($actual -ne $expected) {
+        log_error "ERR009: The downloaded MSI does not match Rancher's published checksum"
+        log_error "ERR009: Expected: $expected"
+        log_error "ERR009: Got:      $actual"
+        return $false
+    }
+
+    log_success "Checksum verified (SHA512)"
+    return $true
+}
+
 function Install-RancherMsi {
     param([string]$MsiPath)
 
@@ -789,6 +831,12 @@ Write-Host ""
 
 # --- Download the MSI ---
 $msiPath = Get-RancherMsi
+
+# --- Verify the download before anything runs elevated ---
+if (-not (Test-MsiChecksum -MsiPath $msiPath)) {
+    Remove-Item $msiPath -Force -ErrorAction SilentlyContinue
+    exit 1
+}
 
 # --- Install ---
 Install-RancherMsi -MsiPath $msiPath

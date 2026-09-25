@@ -32,7 +32,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $SCRIPT_ID          = "rancher-desktop-detect"
 $SCRIPT_NAME        = "Rancher Desktop Detection"
-$SCRIPT_VER         = "0.2.1"
+$SCRIPT_VER         = "0.3.0"
 $SCRIPT_DESCRIPTION = "Intune detection script for Rancher Desktop (per-user install)."
 $SCRIPT_CATEGORY    = "DEPLOY"
 

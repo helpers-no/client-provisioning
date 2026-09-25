@@ -27,7 +27,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $SCRIPT_ID          = "rancher-desktop-build"
 $SCRIPT_NAME        = "Rancher Desktop Package Builder"
-$SCRIPT_VER         = "0.2.0"
+$SCRIPT_VER         = "0.3.0"
 $SCRIPT_DESCRIPTION = "Creates the .intunewin package for the Rancher Desktop deployment."
 $SCRIPT_CATEGORY    = "DEVOPS"
 

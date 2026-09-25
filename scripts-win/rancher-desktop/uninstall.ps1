@@ -29,7 +29,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $SCRIPT_ID          = "rancher-desktop-uninstall"
 $SCRIPT_NAME        = "Rancher Desktop Uninstaller"
-$SCRIPT_VER         = "0.2.0"
+$SCRIPT_VER         = "0.3.0"
 $SCRIPT_DESCRIPTION = "Silently uninstalls Rancher Desktop on Windows (per-user MSI)."
 $SCRIPT_CATEGORY    = "DEPLOY"
 

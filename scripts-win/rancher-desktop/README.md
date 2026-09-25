@@ -4,10 +4,11 @@ Deploys Rancher Desktop on Windows via Intune as a Win32 app.
 
 ## What it does
 
-- Downloads the Rancher Desktop MSI from GitHub releases
+- Downloads the Rancher Desktop MSI (pinned to **1.24.0**) from GitHub releases
+- Verifies the MSI against the SHA512 checksum Rancher publishes beside it, and stops before `msiexec` on a mismatch (ERR009)
 - Installs silently in per-user mode (`MSIINSTALLPERUSER=1`)
 - Skips built-in WSL check (`WSLINSTALLED=1`) -- WSL2 is deployed separately
-- Deploys a defaults profile (container engine: moby, Kubernetes: off) to skip the first-run wizard
+- Deploys a defaults profile (settings version 19, container engine: moby, Kubernetes: off) to skip the first-run wizard
 - Launches Rancher Desktop and verifies backend readiness via `rdctl`
 - Runs `docker run --rm hello-world` to confirm Docker works
 - Shuts down cleanly -- exits 1 if any step fails so Intune retries
