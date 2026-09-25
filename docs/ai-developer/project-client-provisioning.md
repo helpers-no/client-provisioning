@@ -201,6 +201,12 @@ documented on the [DCT website](https://dct.sovereignsky.no/). Repo-specific par
   `ops/bus/fleet-task.sh`, it is out of date: that script was deleted when the fleet moved to the
   compiled client (reported to the template maintainer on 2026-09-25). Use `urb`.
 - Do not clone urb-agents. Do not copy `protocol/` here.
+- **Keep the portable docs byte-identical to the template.** That covers `README`, `WORKFLOW`, `PLANS`,
+  `GIT`, `COORDINATION`, `VERIFICATION`, `WORKTREE`, `SECURITY`, `AZURE-DEVOPS` and `DEVCONTAINER`
+  (`README` has one link that is allowed to differ, to this file). Do not patch a defect in them
+  locally. Put the local override here and report the defect to the template maintainer. That way
+  the maintainer's fix syncs straight over instead of colliding with a local edit. The `fleet-task`
+  pointer above is an example: reported as urb-agents #1501, now #1503.
 
 ## Other documentation
 
