@@ -34,7 +34,7 @@ Bring the Windows packages up to devcontainer-toolbox's host requirements, and r
 
 ---
 
-## Phase 1: Windows: Rancher Desktop 1.22.0 → 1.24.0 (part a) — DONE (not yet validated with pwsh)
+## Phase 1: Windows: Rancher Desktop 1.22.0 → 1.24.0 (part a) — DONE, validated in CI
 
 ### Tasks
 
@@ -63,7 +63,7 @@ Both are existing behaviour, not changed here. **This needs `pwsh`, which is not
 
 ---
 
-## Phase 2: Windows: Windows 11 + x64 check (part b) — DONE (not yet run with pwsh)
+## Phase 2: Windows: Windows 11 + x64 check (part b) — DONE, validated in CI
 
 ### Tasks
 
@@ -111,6 +111,14 @@ The validators pass as in Phase 1. On Terje's PC (Windows 11, x64) both checks m
 **Left as history:** `docs/AI-EXAMPLE-WORKFLOW.md:62` (an example transcript) and the author's text in `INVESTIGATE-windows-one-script-install.md:96`.
 
 ---
+
+## CI result (PR #18, run 36121710567, 2026-09-25)
+
+- **`validate-powershell.sh`:** 13/13, with PSScriptAnalyzer found.
+- **`test-platform-check.ps1`:** 5/5 cases against each of the two installers (10/10).
+- **`intunewin`:** all 3 packages build. The rancher-desktop build test unpacks the package and checks its files. wsl2 has no build test.
+- **0 artifacts uploaded.**
+- **Not covered:** the validator checks only top-level package scripts, so `tests/*.ps1` (including the new test) is not linted.
 
 ## Phase 4: Test on real machines, then ship
 
