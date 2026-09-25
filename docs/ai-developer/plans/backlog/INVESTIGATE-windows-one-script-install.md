@@ -63,12 +63,16 @@ gap will persist. Every claim below is one of:
 
 These checks are part d of #1510 and wait on Terje's go.
 
-**Scope agreed with devcontainer-toolbox (urb-agents #1533, 2026-09-25): VS Code + the Dev Containers extension are this repo's to install.** Neither platform has a package for them today. The installer must:
+**Scope agreed with devcontainer-toolbox (urb-agents #1533, 2026-09-25; the extension moved to DCT by Terje's decision the same day):**
+
+**Ours (this installer):**
 - **Detect VS Code before installing it.** Managed PCs and Macs already get VS Code from Intune Company Portal / Jamf Self Service (`docs/OPS.md`), so a second copy must not be installed. Check both system and user installs, and find `code` on PATH or in the known install folders.
 - **Install VS Code only when missing**, per user where possible. The Windows user installer needs no admin (vendor-documented, not tested). **No winget dependency**, because winget may be disabled by policy (see the Findings above).
-- **Always make sure the extension is there**, as the user and not elevated: `code --install-extension ms-vscode-remote.remote-containers`. Detect it with `code --list-extensions`. DCT's host-side `.vscode/extensions.json` only *prompts*; it doesn't install.
-- **Do it before the final step**, which opens VS Code in the folder.
+- **The final step, "open VS Code in the folder",** stays ours.
 - **No separate Intune/Jamf package for VS Code.** The organisations already deploy it; this is about the user-run installer.
+
+**DCT's (not ours):**
+- **The Dev Containers extension** (`ms-vscode-remote.remote-containers`). DCT's `install.ps1` / `install.sh` installs it as the user, and skips it when `code --list-extensions` already lists it (DCT's PLAN-host-installer-handover task 2.8). **This installer does not install it.** At most, it **checks** `code --list-extensions` *after* DCT's script has run, as a guard, so an install bug has one owner.
 
 Also found: `docs/OPS.md:13` says the extension "is installed automatically" from `.vscode/extensions.json`. It is a recommendation prompt the user must accept. That's a doc fix, filed as a follow-up.
 
