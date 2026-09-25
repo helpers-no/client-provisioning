@@ -206,7 +206,7 @@ Both validators exit 0, and the link check reports zero broken links.
       what was not, and why
 - [ ] 6.3 Report on #1498: what was adopted, what was deliberately not, and which claims in the
       landed investigation are untested
-- [ ] 6.4 Send the template defects above to the template maintainer via `urb send`
+- [x] 6.4 Send the template defects above to the template maintainer via `urb send` — urb-agents #1501 to ops-dev
 - [ ] 6.5 Refresh fleet status with `urb publish-status --via-bus` (plan counts and next step change)
 
 ---
