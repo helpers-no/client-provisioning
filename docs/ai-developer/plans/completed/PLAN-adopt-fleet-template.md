@@ -197,17 +197,17 @@ Both validators exit 0, and the link check reports zero broken links.
 
 ---
 
-## Phase 6: Report and hand back — IN PROGRESS
+## Phase 6: Report and hand back — DONE
 
 ### Tasks
 
 - [x] 6.1 Move this plan to `completed/`
-- [ ] 6.2 **Ask on #1498** before push / PR / merge. The PR description lists what was adopted,
+- [x] 6.2 **Ask on #1498** before push / PR / merge. The PR description lists what was adopted,
       what was not, and why
-- [ ] 6.3 Report on #1498: what was adopted, what was deliberately not, and which claims in the
+- [x] 6.3 Report on #1498: what was adopted, what was deliberately not, and which claims in the
       landed investigation are untested
 - [x] 6.4 Send the template defects above to the template maintainer via `urb send` — urb-agents #1501 to ops-dev
-- [ ] 6.5 Refresh fleet status with `urb publish-status --via-bus` (plan counts and next step change)
+- [x] 6.5 Refresh fleet status with `urb publish-status --via-bus` (plan counts and next step change) — #1502, then #1504 with the priority URL
 
 ---
 

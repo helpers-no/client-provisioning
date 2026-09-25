@@ -228,7 +228,7 @@ User Machine
 
 ## For Maintainers
 
-See [devcontainer.json](../.devcontainer/devcontainer.json) for the container configuration and image details.
+See [devcontainer.json](../../.devcontainer/devcontainer.json) for the container configuration and image details.
 
 ---
 
