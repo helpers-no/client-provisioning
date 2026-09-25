@@ -15,6 +15,7 @@ Deploys Rancher Desktop on Windows via Intune as a Win32 app.
 
 ## Prerequisites
 
+- **Windows 11 (build 22000+) on an x64 PC.** The script stops with a plain message on Windows 10 or ARM (ERR010, ERR011) before changing anything
 - WSL2 must be installed (see `scripts-win/wsl2/`)
 - Internet access (downloads ~500 MB MSI at install time)
 

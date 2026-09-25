@@ -7,6 +7,10 @@ Enables the two Windows features required for WSL2:
 
 These are prerequisites for Rancher Desktop on Windows.
 
+**Requires Windows 11 (build 22000+) on an x64 PC.** WSL2 itself runs on Windows 10 2004+, but this package prepares the PC for Rancher Desktop 1.24, which needs Windows 11 and is x64-only. `install.ps1` stops with a plain message otherwise (ERR002 build, ERR008 architecture).
+
+The check logic has a unit test that runs anywhere `pwsh` runs, with no Windows needed: `pwsh scripts-win/wsl2/tests/test-platform-check.ps1`.
+
 ## Scripts
 
 | Script | Purpose |

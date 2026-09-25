@@ -63,21 +63,27 @@ Both are existing behaviour, not changed here. **This needs `pwsh`, which is not
 
 ---
 
-## Phase 2: Windows: Windows 11 + x64 check (part b)
+## Phase 2: Windows: Windows 11 + x64 check (part b) — DONE (not yet run with pwsh)
 
 ### Tasks
 
-- [ ] 2.1 `scripts-win/wsl2/install.ps1:41`: `$MIN_BUILD` 19041 → **22000** (Windows 11). Change the ERR002 text to plain words: "This PC runs Windows build <n>. Windows 11 is required."
-- [ ] 2.2 Add an x64 check next to it (`$env:PROCESSOR_ARCHITECTURE` = `AMD64`, and `PROCESSOR_ARCHITEW6432` for a 32-bit host). The error says: "This PC has an ARM processor. Only x64 PCs are supported."
-- [ ] 2.3 The same two checks at the start of `scripts-win/rancher-desktop/install.ps1`, because Rancher 1.24 needs Windows 11 and its installer is x64-only. Each script must stand on its own in Intune
-- [ ] 2.4 Update `detect.ps1` only if it depends on the build number (check first). Update the READMEs
-- [ ] 2.5 MINOR bump: `set-version-powershell.sh wsl2`
+- [x] 2.1 `scripts-win/wsl2/install.ps1:41`: `$MIN_BUILD` 19041 → **22000** (Windows 11). Change the ERR002 text to plain words: "This PC runs Windows build <n>. Windows 11 is required."
+- [x] 2.2 Add an x64 check next to it (`$env:PROCESSOR_ARCHITECTURE` = `AMD64`, and `PROCESSOR_ARCHITEW6432` for a 32-bit host). The error says: "This PC has an ARM processor. Only x64 PCs are supported."
+- [x] 2.3 The same two checks at the start of `scripts-win/rancher-desktop/install.ps1`, because Rancher 1.24 needs Windows 11 and its installer is x64-only. Each script must stand on its own in Intune
+- [x] 2.4 Update `detect.ps1` only if it depends on the build number (check first). Update the READMEs
+- [x] 2.5 MINOR bump: `set-version-powershell.sh wsl2`
 
 ### Validation
 
 The validators pass as in Phase 1. On Terje's PC (Windows 11, x64) both checks must **pass**. The failure paths are exercised only by a unit-style test that mocks the build and arch values (see 2.6).
 
-- [ ] 2.6 Add a test in `scripts-win/wsl2/tests/` for the check logic, runnable in the devcontainer with `pwsh`
+- [x] 2.6 Add a test in `scripts-win/wsl2/tests/` for the check logic, runnable in the devcontainer with `pwsh`. It is `test-platform-check.ps1`: it reads `Test-HostPlatform` out of **both** install scripts by AST (without running them) and checks 5 build/arch cases
+
+**Notes from Phase 2:**
+- **Architecture comes from `Win32_Processor.Architecture`**, with the environment variable as fallback. An x64 PowerShell under emulation on an ARM64 PC reports `PROCESSOR_ARCHITECTURE=AMD64`, so the variable alone could miss ARM. **Untested on an ARM PC.**
+- **Error codes:** wsl2 ERR002 (build, reused) and **ERR008** (arch; ERR004 was already unused before this change). rancher-desktop **ERR010** / **ERR011**.
+- **Also updated:** `INTUNE.md` (both packages, minimum OS → Windows 11 21H2, x64 only), `wsl2/TESTING.md` and `tests/test-0-prerequisites.ps1` (build 22000), so the USB test agrees with the script. SCRIPT_VER for wsl2 is 0.3.0.
+- **`detect.ps1` (wsl2)** doesn't use the build number, so it is unchanged.
 
 ---
 

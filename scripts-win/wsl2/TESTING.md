@@ -89,7 +89,8 @@ Individual tests don't log to file. Use `run-all-tests.ps1` for a full logged se
 | Check | Pass condition |
 | ----- | ------------- |
 | Administrator | Running as Administrator or SYSTEM |
-| Windows version | Build 19041+ (Windows 10 2004 or later) |
+| Windows version | Build 22000+ (Windows 11) |
+| Processor | x64 (not ARM) |
 | Virtualization | Hypervisor is present (Intel VT-x / AMD-V enabled in BIOS) |
 
 ### test-1: Install (fully automated)
@@ -124,7 +125,9 @@ This test does NOT run `wsl --version` or `wsl --status`. The WSL kernel compone
 
 **"Virtualization is not enabled"** — Intel VT-x or AMD-V must be enabled in the BIOS/UEFI. This is a hardware setting that cannot be changed from Windows.
 
-**"Windows build is too old"** — WSL2 requires Windows 10 version 2004 (build 19041) or later.
+**"This PC runs Windows build ... Windows 11 is required."** — Rancher Desktop 1.24 needs Windows 11 (build 22000). WSL2 itself runs on Windows 10 2004+, but this package targets the Rancher setup.
+
+**"This PC has an ARM64 processor. Only x64 PCs are supported."** — the Rancher Desktop installer is x64-only.
 
 **Features stuck in `EnablePending`** — The PC needs a reboot. Reboot and re-run the tests.
 

@@ -63,6 +63,7 @@ $MIN_DISK_SPACE_GB    = 2
 $DOWNLOAD_TIMEOUT_SEC  = 1800
 $DOWNLOAD_PROGRESS_SEC = 10
 $DOWNLOAD_MIN_SIZE     = 100MB
+$MIN_BUILD             = 22000   # Windows 11 (Rancher Desktop 1.24 requires it)
 
 # Deployment profile -- written to HKLM registry (requires admin).
 # "defaults" profile applies on first launch only. The user can change
@@ -114,6 +115,7 @@ function Show-Help {
     Write-Host "  -Help     Show this help message"
     Write-Host ""
     Write-Host "Prerequisites:"
+    Write-Host "  Windows 11 (build 22000 or later) on an x64 PC"
     Write-Host "  WSL2 must be installed (features enabled + kernel)"
     Write-Host "  Internet access (downloads ~500 MB MSI)"
     Write-Host ""
@@ -134,6 +136,58 @@ if ($Help) {
 #------------------------------------------------------------------------------
 # HELPER FUNCTIONS
 #------------------------------------------------------------------------------
+
+function Get-HostArchitecture {
+    # Win32_Processor reports the real CPU, even when an x64 PowerShell runs
+    # under emulation on an ARM64 PC (where PROCESSOR_ARCHITECTURE says AMD64).
+    # Architecture codes: 9 = x64, 12 = ARM64, 0 = x86, 5 = ARM
+    try {
+        $cpu = Get-CimInstance -ClassName Win32_Processor -ErrorAction Stop | Select-Object -First 1
+        switch ([int]$cpu.Architecture) {
+            9       { return "x64" }
+            12      { return "ARM64" }
+            0       { return "x86" }
+            5       { return "ARM" }
+            default { return "unknown($($cpu.Architecture))" }
+        }
+    }
+    catch {
+        $arch = $env:PROCESSOR_ARCHITEW6432
+        if (-not $arch) { $arch = $env:PROCESSOR_ARCHITECTURE }
+        if ($arch -eq "AMD64") { return "x64" }
+        return $arch
+    }
+}
+
+function Test-HostPlatform {
+    # Returns $true when the PC is Windows 11 (build >= $MinBuild) on x64.
+    # Parameters let the tests pass fake values.
+    param(
+        [int]$Build = [System.Environment]::OSVersion.Version.Build,
+        [string]$Architecture = (Get-HostArchitecture),
+        [int]$MinBuild = $MIN_BUILD,
+        [string]$BuildCode = "ERR010",
+        [string]$ArchCode = "ERR011"
+    )
+    $ok = $true
+    if ($Build -lt $MinBuild) {
+        log_error "${BuildCode}: This PC runs Windows build $Build. Windows 11 is required."
+        log_error "${BuildCode}: Rancher Desktop 1.24 does not support Windows 10 (minimum build: $MinBuild)"
+        $ok = $false
+    }
+    else {
+        log_success "Windows build $Build meets minimum ($MinBuild, Windows 11)"
+    }
+    if ($Architecture -ne "x64") {
+        log_error "${ArchCode}: This PC has an $Architecture processor. Only x64 PCs are supported."
+        log_error "${ArchCode}: The Rancher Desktop installer is available for x64 only"
+        $ok = $false
+    }
+    else {
+        log_success "Processor architecture is x64"
+    }
+    return $ok
+}
 
 function Test-RancherInstalled {
     foreach ($dir in $RANCHER_INSTALL_PATHS) {
@@ -744,6 +798,12 @@ function Stop-RancherDesktop {
 log_start
 log_info "  Version: $RANCHER_VERSION"
 log_info "  Checking paths: $($RANCHER_INSTALL_PATHS -join ', ')"
+
+# --- Prerequisite: Windows 11 on x64 (checked before anything changes) ---
+if (-not (Test-HostPlatform)) {
+    log_error "This PC cannot run Rancher Desktop $RANCHER_VERSION. Nothing was changed."
+    exit 1
+}
 
 # --- Check if already installed ---
 $existingDir = Test-RancherInstalled

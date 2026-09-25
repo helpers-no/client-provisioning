@@ -31,8 +31,8 @@ Settings for creating the Win32 app in the Intune portal.
 
 | Field | Value |
 |-------|-------|
-| Operating system architecture | 64-bit |
-| Minimum operating system | Windows 10 2004 (build 19041) |
+| Operating system architecture | 64-bit (x64). If the portal lets you choose per architecture, select **x64 only**, not ARM64: the Rancher Desktop installer is x64-only, and the script stops on ARM (not yet checked in the current portal) |
+| Minimum operating system | **Windows 11 21H2** (build 22000). Rancher Desktop 1.24 does not support Windows 10, and the script also checks it |
 
 ---
 

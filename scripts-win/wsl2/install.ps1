@@ -28,7 +28,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $SCRIPT_ID          = "wsl2-install"
 $SCRIPT_NAME        = "WSL2 Feature Installer"
-$SCRIPT_VER         = "0.2.0"
+$SCRIPT_VER         = "0.3.0"
 $SCRIPT_DESCRIPTION = "Enables WSL2 Windows features via DISM for Intune deployment."
 $SCRIPT_CATEGORY    = "DEPLOY"
 
@@ -38,7 +38,7 @@ $SCRIPT_CATEGORY    = "DEPLOY"
 
 $WSL_FEATURE        = "Microsoft-Windows-Subsystem-Linux"
 $VM_FEATURE         = "VirtualMachinePlatform"
-$MIN_BUILD          = 19041
+$MIN_BUILD          = 22000   # Windows 11 (Rancher Desktop 1.24 requires it)
 
 #------------------------------------------------------------------------------
 # LOGGING
@@ -84,6 +84,58 @@ if ($Help) {
 # HELPER FUNCTIONS
 #------------------------------------------------------------------------------
 
+function Get-HostArchitecture {
+    # Win32_Processor reports the real CPU, even when an x64 PowerShell runs
+    # under emulation on an ARM64 PC (where PROCESSOR_ARCHITECTURE says AMD64).
+    # Architecture codes: 9 = x64, 12 = ARM64, 0 = x86, 5 = ARM
+    try {
+        $cpu = Get-CimInstance -ClassName Win32_Processor -ErrorAction Stop | Select-Object -First 1
+        switch ([int]$cpu.Architecture) {
+            9       { return "x64" }
+            12      { return "ARM64" }
+            0       { return "x86" }
+            5       { return "ARM" }
+            default { return "unknown($($cpu.Architecture))" }
+        }
+    }
+    catch {
+        $arch = $env:PROCESSOR_ARCHITEW6432
+        if (-not $arch) { $arch = $env:PROCESSOR_ARCHITECTURE }
+        if ($arch -eq "AMD64") { return "x64" }
+        return $arch
+    }
+}
+
+function Test-HostPlatform {
+    # Returns $true when the PC is Windows 11 (build >= $MinBuild) on x64.
+    # Parameters let the tests pass fake values.
+    param(
+        [int]$Build = [System.Environment]::OSVersion.Version.Build,
+        [string]$Architecture = (Get-HostArchitecture),
+        [int]$MinBuild = $MIN_BUILD,
+        [string]$BuildCode = "ERR002",
+        [string]$ArchCode = "ERR008"
+    )
+    $ok = $true
+    if ($Build -lt $MinBuild) {
+        log_error "${BuildCode}: This PC runs Windows build $Build. Windows 11 is required."
+        log_error "${BuildCode}: Rancher Desktop 1.24 does not support Windows 10 (minimum build: $MinBuild)"
+        $ok = $false
+    }
+    else {
+        log_success "Windows build $Build meets minimum ($MinBuild, Windows 11)"
+    }
+    if ($Architecture -ne "x64") {
+        log_error "${ArchCode}: This PC has an $Architecture processor. Only x64 PCs are supported."
+        log_error "${ArchCode}: The Rancher Desktop installer is available for x64 only"
+        $ok = $false
+    }
+    else {
+        log_success "Processor architecture is x64"
+    }
+    return $ok
+}
+
 function Get-FeatureState {
     param([string]$FeatureName)
     try {
@@ -127,14 +179,10 @@ if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administra
 }
 log_success "Running as Administrator"
 
-# --- Prerequisite: Windows version ---
-$build = [System.Environment]::OSVersion.Version.Build
-if ($build -lt $MIN_BUILD) {
-    log_error "ERR002: Windows build $build is too old (minimum: $MIN_BUILD)"
-    log_error "ERR002: WSL2 requires Windows 10 version 2004 or later"
+# --- Prerequisite: Windows 11 on x64 ---
+if (-not (Test-HostPlatform)) {
     exit 1
 }
-log_success "Windows build $build meets minimum ($MIN_BUILD)"
 
 # --- Prerequisite: Virtualization ---
 try {
