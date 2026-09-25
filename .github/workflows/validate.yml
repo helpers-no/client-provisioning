@@ -1,0 +1,68 @@
+# Validate every PR: bash scripts, PowerShell scripts, and the .intunewin build.
+#
+# Plan: docs/ai-developer/plans/active/PLAN-github-actions-ci.md (approved as 4a,
+# urb-agents #1520). No host in the fleet has pwsh, so this workflow is the
+# validator of record for PowerShell.
+#
+# NOTHING IS UPLOADED. This repo is public: any signed-in GitHub user can
+# download workflow artifacts. Publishing an installable .intunewin is a
+# separate decision (4b) that has not been made.
+
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  bash:
+    name: bash
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Validate bash packages
+        run: bash docs/ai-developer/tools/validate-bash.sh
+      # Test folders join here once PLAN-fix-mac-test-startup-line has landed
+      # (scripts-mac/devcontainer-toolbox/tests fails 8/9 today, also on main).
+
+  powershell:
+    name: powershell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install PSScriptAnalyzer
+        # validate-powershell.sh skips the lint silently if the module is missing,
+        # so it must be installed for the result to mean anything.
+        shell: pwsh
+        run: Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+      - name: Validate PowerShell packages
+        run: bash docs/ai-developer/tools/validate-powershell.sh
+      # Unit tests are added in the same PR as the test file they run
+      # (test-platform-check.ps1 arrives with the Rancher 1.24 PR, #18).
+
+  intunewin:
+    name: intunewin (${{ matrix.package }})
+    needs: powershell
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [rancher-desktop, wsl2, devcontainer-toolbox]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install ContentPrep
+        shell: pwsh
+        run: Install-Module -Name SvRooij.ContentPrep.Cmdlet -Force -Scope CurrentUser
+      - name: Build .intunewin
+        shell: pwsh
+        run: ./scripts-win/${{ matrix.package }}/build.ps1
+      - name: Test the build (if the package has a build test)
+        shell: pwsh
+        run: |
+          $test = "./scripts-win/${{ matrix.package }}/tests/run-tests-build.ps1"
+          if (Test-Path $test) { & $test } else { Write-Host "No build test for ${{ matrix.package }} -- skipping" }
+      # Deliberately no upload-artifact step: see the header of this file.

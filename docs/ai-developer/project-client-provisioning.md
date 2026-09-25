@@ -72,6 +72,8 @@ reinstall).
 
 Run everything from the repo root, inside the devcontainer.
 
+**CI is the validator of record for PowerShell.** No host in the fleet has `pwsh` (checked 2026-09-25), so `.github/workflows/validate.yml` runs `validate-bash.sh`, `validate-powershell.sh` (with PSScriptAnalyzer installed) and the `.intunewin` build and tests on every PR. It **uploads nothing**, because the repo is public. Azure Pipelines still builds on `main` (see [CICD.md](../CICD.md)).
+
 ```bash
 # Validate (syntax, help, metadata, shellcheck / PSScriptAnalyzer)
 bash docs/ai-developer/tools/validate-bash.sh                        # all mac packages
