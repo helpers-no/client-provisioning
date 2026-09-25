@@ -112,7 +112,7 @@ The validators pass as in Phase 1. On Terje's PC (Windows 11, x64) both checks m
 
 ---
 
-## Phase 1b: Upgrade existing PCs (Terje: option A, urb-agents #1522) — DONE, CI pending
+## Phase 1b: Upgrade existing PCs (Terje: option A, urb-agents #1522) — DONE, CI green (run 36123809935: validator 13/13, platform 10/10, version pin OK)
 
 - [x] 1b.1 `detect.ps1`: an installed version below `$MIN_RANCHER_VERSION` (1.24.0) = **not detected**, so Intune runs install. **Version unreadable = detected**, to avoid a reinstall loop
 - [x] 1b.2 `install.ps1`, already-installed branch: if the version is older than the pin, stop Rancher, check internet and disk, then download → **SHA512 check** → `msiexec` over the top. Then verify as before
