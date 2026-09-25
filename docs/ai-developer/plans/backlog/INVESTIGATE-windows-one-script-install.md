@@ -74,6 +74,18 @@ These checks are part d of #1510 and wait on Terje's go.
 **DCT's (not ours):**
 - **The Dev Containers extension** (`ms-vscode-remote.remote-containers`). DCT's `install.ps1` / `install.sh` installs it as the user, and skips it when `code --list-extensions` already lists it (DCT's PLAN-host-installer-handover task 2.8). **This installer does not install it.** At most, it **checks** `code --list-extensions` *after* DCT's script has run, as a guard, so an install bug has one owner.
 
+**DCT's side of the handover exists: `dct-init` in DCT 1.9.0 (urb-agents #1543, 2026-09-25).** It is installed per user by DCT's `install.ps1` / `install.sh`, at `%LOCALAPPDATA%\devcontainer-toolbox\bin\dct-init.cmd` on Windows (and on the **user** PATH) or `~/.local/bin/dct-init` on Mac.
+- **Call:** `dct-init -TargetDir <path>` / `--target-dir <path>`, un-elevated, no prompts, safe to run twice.
+- **Exit codes:** 0 done, 1 prerequisite, 2 network, 3 target folder. Error lines carry `ERR0nn` (ERR001–ERR005 prerequisites, ERR010–ERR012 folder, ERR020/ERR022 download/pull, WARN030 extension). Our installer **passes the code line through verbatim**.
+- **It also does what `devcontainer-init` did:** the backup that refuses when one exists, the host `.vscode/extensions.json`, and the extension.
+
+What this means for our installer:
+- ⚠️ **PATH in one session.** Rancher Desktop, VS Code and DCT each add themselves to the **user PATH in the registry**, and our already-running process doesn't see that. Before calling `dct-init`, our installer must **re-read `Path` from the registry (Machine + User) into `$env:Path`**, and call `dct-init` **by full path**. Otherwise it gets ERR002 (docker), ERR004 (VS Code), or "not found".
+- **Order:** install VS Code (if missing) → install Rancher → start Rancher and wait until it's ready → DCT `install.ps1` → refresh PATH → `dct-init -TargetDir` → check the extension → open VS Code. `dct-init` refuses with ERR003 if Rancher isn't running.
+- **Work folder:** it must not be a drive root, a system folder or the home folder itself (ERR011), for example `Documents\DevContainer-Toolbox\<name>`.
+- **Not pinned yet:** DCT's scripts come from `main` and the image is `:latest`. **We don't ship anything that depends on DCT until DCT sends its first release URL** (tags, `SHA256SUMS`, `host-requirements.json`: DCT PLAN-host-installer-handover Phase 3).
+- **Retiring `devcontainer-init`** (part c on #1510, answered "later") is now possible. It waits on the same pinned release, then on Terje's go, because otherwise our Intune package would call unpinned code.
+
 Also found: `docs/OPS.md:13` says the extension "is installed automatically" from `.vscode/extensions.json`. It is a recommendation prompt the user must accept. That's a doc fix, filed as a follow-up.
 
 Minor correction from landing: the WSL "help wanted" note is in the root
