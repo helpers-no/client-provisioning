@@ -43,7 +43,7 @@ The Devcontainer Toolbox is a command-line tool that gives developers a complete
 
 The biggest benefit is for maintenance and support of the systems we run in Azure. Developers check in not only the code, but also the full development environment. When the maintenance team needs to fix a bug, they check out the repo and get the exact same environment the original developer used -- same tools, same versions, same configuration. No guessing, no "works on my machine" problems. Onboarding a new developer takes minutes, not days.
 
-For more details, see the [Devcontainer Toolbox website](https://dct.sovereignsky.no/) and [DEVCONTAINER-TOOLBOX.md](ai-developer/DEVCONTAINER-TOOLBOX.md).
+For more details, see the [Devcontainer Toolbox website](https://dct.sovereignsky.no/) and [DEVCONTAINER.md](ai-developer/DEVCONTAINER.md).
 
 **What needs to be installed:**
 

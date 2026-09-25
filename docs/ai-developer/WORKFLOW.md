@@ -1,41 +1,45 @@
+---
+mdx:
+  format: md
+---
+
 # Plan to Implementation Workflow
 
-How plans become implemented features.
+How ideas become implemented features.
 
 **Related:**
-- [PLANS.md](PLANS.md) - Plan structure, templates, and best practices
-- Git hosting guide — platform-specific PR, merge, and work item commands. Use the file that matches your repo's hosting platform:
-  - [GIT-HOSTING-AZURE-DEVOPS.md](GIT-HOSTING-AZURE-DEVOPS.md) — for repos on Azure DevOps
+- [PLANS.md](PLANS.md) — Plan structure, templates, and best practices
+- [GIT.md](GIT.md) — Git safety rules and platform operations
 
 ---
 
 ## The Flow
 
-**Note:** Claude always asks for confirmation before running git commands (add, commit, push, branch, merge).
+**Note:** The AI always asks for confirmation before running git commands (add, commit, push, branch, merge). See [GIT.md](GIT.md).
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                                                                     │
 │  1. USER: "I want to add feature X" or "Fix problem Y"              │
 │                                                                     │
-│  2. CLAUDE:                                                         │
-│     - Creates PLAN-*.md or INVESTIGATE-*.md in backlog/             │
-│     - Asks user to review the plan                                  │
+│  2. AI: Investigates the problem                                    │
+│     - Researches best practices, tools, approaches                  │
+│     - Creates INVESTIGATE-*.md or PLAN-*.md in plans/backlog/       │
+│     - Asks user to review                                           │
 │                                                                     │
-│  3. USER: Reviews and edits the plan, then confirms                 │
+│  3. USER: Reviews, asks AI to check for gaps, then confirms         │
 │                                                                     │
-│  4. CLAUDE:                                                         │
-│     - Moves plan to active/                                         │
-│     - Implements phase by phase                                     │
-│     - Runs validation after each phase                              │
-│     - Commits after each phase                                      │
+│  4. AI: Implements phase by phase                                   │
+│     - Moves plan to plans/active/                                   │
+│     - Works through phases in order                                 │
+│     - Asks user to confirm after each phase                         │
 │     - Updates plan with progress                                    │
 │                                                                     │
 │  5. USER: Reviews result                                            │
 │                                                                     │
-│  6. CLAUDE:                                                         │
-│     - Moves plan to completed/                                      │
-│     - Final commit                                                  │
+│  6. AI: Completes                                                   │
+│     - Moves plan to plans/completed/                                │
+│     - Final commit and PR if on feature branch                      │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -44,47 +48,50 @@ How plans become implemented features.
 
 ## Step 1: Describe What You Want
 
-Tell Claude what you want to do:
+Tell the AI what you want to do:
 
 ```
-"I want to add a Rancher Desktop install script"
-```
-
-```
-"Fix the devcontainer-init script to handle missing Homebrew"
+"I want to add a search feature"
 ```
 
 ```
-"Add a new script folder for infrastructure stack setup"
+"Fix the broken navigation on mobile"
+```
+
+```
+"We need to evaluate options for authentication"
 ```
 
 ---
 
-## Step 2: Claude Creates a Plan
+## Step 2: AI Investigates and Plans
 
-Claude will:
+This is the **most important step**. The AI should spend the most time here.
 
-1. **Create plan file** in `docs/ai-developer/plans/backlog/`:
-   - `PLAN-*.md` if the solution is clear
-   - `INVESTIGATE-*.md` if research is needed first
-2. **Ask you to review** the plan
+### When the solution is clear:
 
-See [PLANS.md](PLANS.md) for plan structure, templates, and what goes in each section.
+The AI creates `PLAN-*.md` in `plans/backlog/` and asks you to review.
 
----
+### When research is needed first:
 
-## Step 3: Review the Plan
+The AI creates `INVESTIGATE-*.md` in `plans/backlog/`. During investigation, the AI should:
 
-Open the plan file and review it:
+- **Research best practices** — use web search to find how others have solved similar problems
+- **Find tools and libraries** — and verify they are actively maintained, recently updated, and have healthy community adoption
+- **Analyse options** — document pros/cons of different approaches
+- **Check its own findings** — AI can hallucinate tools or patterns that don't exist. Ask it to verify.
+
+After investigation, the AI creates one or more PLAN files with the chosen approach.
+
+### Review the investigation or plan:
 
 - Are the phases in the right order?
 - Are the tasks specific enough?
 - Is anything missing?
-- Are the validation steps correct?
 
-Edit the file if needed.
+**Ask the AI to check for gaps:** "Are there gaps in this plan?" or "What could go wrong?" This catches missing steps, overlooked dependencies, and edge cases.
 
-When satisfied, tell Claude:
+Edit the file if needed. When satisfied:
 
 ```
 "Plan approved, start implementation"
@@ -92,27 +99,21 @@ When satisfied, tell Claude:
 
 ---
 
-## Step 4: Claude Implements
+## Step 3: AI Implements
 
-Claude will:
+The AI will:
 
-1. **Move plan to active/**:
-   ```bash
-   mv docs/ai-developer/plans/backlog/PLAN-xyz.md docs/ai-developer/plans/active/
-   ```
+1. **Ask about feature branch** (recommended):
 
-2. **Ask about feature branch** (recommended):
-
-   Claude will ask:
    > "Do you want to work on a feature branch? (recommended)
    >
    > This keeps your changes separate from the main code until you're ready.
-   > When done, you'll merge your changes back into main."
+   > When done, you'll create a Pull Request to merge your changes."
 
-   **If yes:** Claude creates a branch like `feature/update-scripts`
-   **If no:** Claude works directly on the current branch
+   **If yes:** AI creates a branch like `feature/add-search`
+   **If no:** AI works directly on the current branch
 
-   *See "What is a Feature Branch?" below if you're new to this.*
+2. **Move plan to active/**
 
 3. **Work phase by phase**:
    - Complete tasks in order
@@ -125,17 +126,11 @@ Claude will:
 
 ---
 
-## Step 5: Review Result
+## Step 4: Review Result
 
-Check the changes:
+Check the changes. If changes are needed, tell the AI what to fix.
 
-- Does the code work?
-- Does validation pass? (see language rules for the specific command)
-- Any lint warnings?
-
-If changes needed, tell Claude what to fix.
-
-If good, tell Claude:
+If good:
 
 ```
 "Looks good, complete it"
@@ -143,55 +138,37 @@ If good, tell Claude:
 
 ---
 
-## Step 6: Claude Completes
+## Step 5: AI Completes
 
-Claude will:
+The AI will:
 
 1. **Move plan to completed/**
 2. **Update plan status**: `## Status: Completed`
 3. **Push changes**
 
-**If working on a feature branch**, Claude will also:
+**If working on a feature branch**, the AI will also:
 
-4. **Push the branch** to the remote
-5. **Create a PR** using the platform-specific commands (see the git hosting guide linked at the top of this file)
-6. **Merge the PR** (squash merge, delete source branch)
-7. **Switch to main**, pull, and delete the local feature branch
-
-**Before merging**, Claude will ask:
-
-8. **Check version bump**:
-   > "Should we bump the version before merging?
-   > See the language rules for the version bump command."
-
----
-
-## Version Management
-
-Before pushing or merging, Claude MUST:
-
-1. **Ask the user:** "Should we bump the version for this change?"
-2. **If yes:** Use the language-specific version tool (see language rules) to update `SCRIPT_VER` in all scripts within that folder
-3. **Version types:**
-   - PATCH (0.0.x → 0.0.y): Bug fixes, small improvements
-   - MINOR (0.x.0 → 0.y.0): New features, new scripts
-   - MAJOR (x.0.0 → y.0.0): Breaking changes
-
-**Why this matters:** The version in `SCRIPT_VER` is shown in help output and used to track which version of a script is deployed.
+4. **Create a Pull Request**
+5. **Explain next steps**:
+   > "I've created a Pull Request. You can:
+   > - Review it on GitHub/Azure DevOps
+   > - Ask someone to review it
+   > - Merge it when ready"
 
 ---
 
 ## Quick Reference
 
-### Commands to give Claude:
+### Commands to give the AI:
 
-| You say | Claude does |
-|---------|-------------|
-| "I want to add X" / "Fix Y" | Creates plan, asks for review |
+| You say | AI does |
+|---------|---------|
+| "I want to add X" / "Fix Y" | Investigates, creates plan, asks for review |
+| "Check this plan for gaps" | Analyses plan for missing steps and edge cases |
 | "Plan approved" | Asks about feature branch, moves to active/, starts implementing |
 | "Yes, use a feature branch" | Creates branch, works there |
 | "No, work on current branch" | Works on current branch |
-| "Looks good, complete it" | Moves to completed/, pushes, creates PR, merges, switches to main |
+| "Looks good, complete it" | Moves to completed/, creates PR if on feature branch |
 | "Stop" | Pauses and waits for instructions |
 
 ---
@@ -199,44 +176,47 @@ Before pushing or merging, Claude MUST:
 ## Example Session
 
 ```
-YOU: I want to add a Rancher Desktop install script
+YOU: I want to add a caching layer for the API responses
 
-CLAUDE: I'll create a plan for that.
-        Created docs/ai-developer/plans/backlog/PLAN-rancher-desktop-install.md
+AI:  This needs some research first. I'll investigate caching options.
+     Created plans/backlog/INVESTIGATE-api-caching.md
 
-        Please review the plan and let me know if it looks good
-        or needs changes.
+     Please review the investigation and let me know if it looks good
+     or needs changes.
 
-YOU: [reviews file, makes edits]
-     Plan approved, start implementation
+YOU: [reviews file]
+     Can you also check what Redis alternatives exist that are simpler?
 
-CLAUDE: Do you want to work on a feature branch? (recommended)
+AI:  [updates investigation with Redis alternatives analysis]
+     Updated the investigation. Ready for your review.
 
-        This keeps your changes separate from the main code until you're ready.
-        When done, you'll merge your changes back into main.
+YOU: Looks good. The plan looks solid.
+
+AI:  Do you want to work on a feature branch? (recommended)
 
 YOU: Yes
 
-CLAUDE: Created branch: feature/rancher-desktop-install
-        Moving plan to active/...
-        Starting Phase 1...
+AI:  Created branch: feature/api-caching
+     Moving plan to active/...
+     Starting Phase 1...
 
-        [works through phases, committing after each]
+     [works through phases, asking for confirmation after each]
 
-        Phase 2 complete. Tests pass.
-        Continuing to Phase 3...
+     Phase 2 complete. All tests passing.
+     Continuing to Phase 3...
 
-        All phases complete. Please review the changes.
+     All phases complete. Please review the changes.
 
 YOU: Looks good, complete it
 
-CLAUDE: Done! I've:
-        - Moved plan to completed/
-        - Pushed the feature branch
-        - Created PR #4151
-        - Squash merged into main
-        - Switched to main and pulled
-        - Deleted the feature branch
+AI:  Done! I've:
+     - Moved plan to completed/
+     - Pushed the feature branch
+     - Created Pull Request #15
+
+     Next steps:
+     - Review the PR
+     - Merge it when you're ready
 ```
 
 ---
@@ -245,18 +225,54 @@ CLAUDE: Done! I've:
 
 *If you're new to git branches, this section explains the concept.*
 
-A **branch** is like making a personal copy of the code to work on. Your changes don't affect the main code until you're ready to merge them back.
+### The Problem
+
+Imagine you're writing a book with others. If everyone edits the same copy at the same time, it gets messy. Someone might overwrite your changes, or you might break something while experimenting.
+
+### The Solution: Branches
+
+A **branch** is like making a personal copy of the book to work on. You can:
+- Make changes without affecting the original
+- Experiment freely
+- Share your copy when it's ready
 
 ```
 main (the original)
   │
-  └── feature/rancher-install (your copy)
+  └── feature/add-caching (your copy)
         │
         └── [you work here safely]
 ```
 
-**The workflow:** Create branch → make changes → push branch → review → merge into main.
+### The Workflow
 
-**Why it's recommended:** Your experiments are safe (won't break main), reviewable (others check before merging), and reversible (easy to undo).
+1. **Create branch** — Make your personal copy
+2. **Work on it** — Make changes, commit as you go
+3. **Create Pull Request (PR)** — Ask to merge your changes back
+4. **Review** — Others can look at your changes before merging
+5. **Merge** — Your changes become part of the original
 
-You don't need to memorize git commands — Claude handles branching, pushing, and merging for you.
+### Why It's Recommended
+
+- **Safe**: Your experiments don't break the main code
+- **Reviewable**: Others can check your work before it's merged
+- **Reversible**: Easy to undo if something goes wrong
+- **Collaborative**: Multiple people can work on different features
+
+You don't need to memorize the git commands — the AI handles them for you. See [GIT.md](GIT.md) for details.
+
+---
+
+## Optional: Working with Issues
+
+If you're using an issue tracker (GitHub Issues, Azure DevOps Work Items), tell the AI:
+
+```
+"Work on issue #42"
+```
+
+The AI will:
+1. Read the issue
+2. Create a plan based on the issue
+3. Create a branch linked to the issue
+4. Close the issue when complete

@@ -94,4 +94,4 @@ Note: the pre-commit hook automatically bumps patch versions on any changed scri
 
 ## Beyond the Basics
 
-For pull requests, branching, merging, pipelines, and other Azure DevOps operations, see [Git Hosting: Azure DevOps](ai-developer/GIT-HOSTING-AZURE-DEVOPS.md).
+For pull requests, branching, merging, pipelines, and other Azure DevOps operations, see [Git Hosting: Azure DevOps](ai-developer/AZURE-DEVOPS.md).

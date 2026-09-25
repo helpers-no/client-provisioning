@@ -6,7 +6,7 @@ This repo uses [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (An
 
 ## Setting Up Claude Code
 
-Claude Code was installed using `dev-setup` (see [Devcontainer Toolbox](ai-developer/DEVCONTAINER-TOOLBOX.md) for how to install and manage tools). It is listed in `enabled-tools.conf` so it auto-installs on every container rebuild. You just need to authenticate.
+Claude Code was installed using `dev-setup` (see [Devcontainer Toolbox](ai-developer/DEVCONTAINER.md) for how to install and manage tools). It is listed in `enabled-tools.conf` so it auto-installs on every container rebuild. You just need to authenticate.
 
 ### First-time setup
 
@@ -126,8 +126,8 @@ Detailed docs on workflow, script standards, validation tools, and templates.
 
 | Document | What it covers |
 |----------|----------------|
-| [Git Hosting: Azure DevOps](ai-developer/GIT-HOSTING-AZURE-DEVOPS.md) | PRs, merging, wiki, work items — az CLI commands |
-| [Devcontainer Toolbox](ai-developer/DEVCONTAINER-TOOLBOX.md) | Discover, install, and manage devcontainer tools |
+| [Git Hosting: Azure DevOps](ai-developer/AZURE-DEVOPS.md) | PRs, merging, wiki, work items — az CLI commands |
+| [Devcontainer Toolbox](ai-developer/DEVCONTAINER.md) | Discover, install, and manage devcontainer tools |
 
 ---
 
