@@ -23,7 +23,7 @@ Fleet work is on the bus in `terchris/urb-agents` —
 
 | # | What | Why this one |
 |---|---|---|
-| **1** | Finish [PLAN-adopt-fleet-template](../active/PLAN-adopt-fleet-template.md) (urb-agents #1498): PR, report | Assigned; every later plan uses the new structure |
+| **1** | Finish [PLAN-adopt-fleet-template](../completed/PLAN-adopt-fleet-template.md) (urb-agents #1498): PR, report | Assigned; every later plan uses the new structure |
 | **2** | [INVESTIGATE-windows-one-script-install](INVESTIGATE-windows-one-script-install.md): desk work that needs no machine — map each design step to the existing `scripts-win/` code, list what is reusable | High priority (Terje); can progress before test machines exist |
 
 ## Waiting on someone — ordered by what it unblocks

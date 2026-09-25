@@ -230,6 +230,6 @@ powershell -ExecutionPolicy Bypass -File "D:\scripts-win\devcontainer-toolbox\te
 Logs are saved to `tests/logs/` in each package folder. Bring the USB back so the logs can be reviewed.
 
 See individual TESTING.md files for details:
-- [rancher-desktop/TESTING.md](rancher-desktop/TESTING.md)
-- [devcontainer-toolbox/TESTING.md](devcontainer-toolbox/TESTING.md)
-- [wsl2/TESTING.md](wsl2/TESTING.md)
+- [rancher-desktop/TESTING.md](../scripts-win/rancher-desktop/TESTING.md)
+- [devcontainer-toolbox/TESTING.md](../scripts-win/devcontainer-toolbox/TESTING.md)
+- [wsl2/TESTING.md](../scripts-win/wsl2/TESTING.md)

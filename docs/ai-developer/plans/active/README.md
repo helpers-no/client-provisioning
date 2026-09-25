@@ -16,4 +16,4 @@ for what would be next.
 
 INVESTIGATE files never live here — see [PLANS.md](../../PLANS.md).
 
-**In progress:** [PLAN-adopt-fleet-template.md](PLAN-adopt-fleet-template.md) — urb-agents #1498.
+**Nothing in progress.** The last plan was [PLAN-adopt-fleet-template](../completed/PLAN-adopt-fleet-template.md) (urb-agents #1498). See [`1PRIORITY.md`](../backlog/1PRIORITY.md) for what is next.

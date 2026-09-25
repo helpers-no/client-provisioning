@@ -8,7 +8,7 @@ Bring docs/ai-developer/ up to the fleet ai-developer-template and add a root AG
 >
 > **UPDATE THIS PLAN AS YOU WORK:** Mark tasks `[x]` when done, add `— DONE` to phase headers, update status.
 
-## Status: Active
+## Status: Completed
 
 **Goal**: Bring `docs/ai-developer/` up to the fleet `ai-developer-template` (terchris/urb-agents) and
 give the repo a root `AGENTS.md`, without flattening this repo's own script standard. Land the
@@ -172,27 +172,36 @@ The landed file matches the #1492 comment except for the rules links and the add
 
 ---
 
-## Phase 5: Validate
+## Phase 5: Validate — DONE (one check could not run here)
 
 ### Tasks
 
-- [ ] 5.1 `bash docs/ai-developer/tools/validate-bash.sh` and `bash docs/ai-developer/tools/validate-powershell.sh`
+- [x] 5.1 `bash docs/ai-developer/tools/validate-bash.sh` and `bash docs/ai-developer/tools/validate-powershell.sh`
       pass. No scripts change, so this proves nothing broke
-- [ ] 5.2 Check relative links: a scratch script checks that every relative `.md` link under
+- [x] 5.2 Check relative links: a scratch script checks that every relative `.md` link under
       `docs/`, `CLAUDE.md` and `AGENTS.md` resolves (there is no Docusaurus build to rely on)
-- [ ] 5.3 No `SCRIPT_VER` bump, because no script changes. The repo has no `version.txt`
+- [x] 5.3 No `SCRIPT_VER` bump, because no script changes. The repo has no `version.txt`
 
 ### Validation
 
 Both validators exit 0, and the link check reports zero broken links.
 
+### Results (2026-09-25, run on tecMacDev host, not in the devcontainer)
+
+| Check | Result |
+|---|---|
+| `validate-bash.sh` | **Pass**: 7/7 scripts, exit 0 |
+| `validate-powershell.sh` | **Not run**: `pwsh` is not installed on the host (ERR001). `git diff --name-only main...HEAD` shows **no `.sh`/`.ps1` changed**, so nothing on this branch can have broken a script. CI (`validate` stage) runs it only when `scripts-win/` changes, so CI will not run it either |
+| Relative links (scratch script, 83 tracked `.md`, `plans/completed/` excluded) | **1 broken, and it predates this branch**: `scripts-mac/devcontainer-toolbox/README.md` → `../.devcontainer/devcontainer.json` (should be `../../`). Left alone because it is a change under `scripts-mac/`, which needs an ask. 4 other links that were already broken on `main` were fixed (`docs/MANUAL-TEST-WINDOWS-REINSTALL.md` ×3, `INVESTIGATE-wsl-intune.md` ×1) |
+| Azure DevOps wiki rendering of the new files (frontmatter, `.order`) | **Not verified.** Needs the Azure DevOps wiki after merge |
+
 ---
 
-## Phase 6: Report and hand back
+## Phase 6: Report and hand back — IN PROGRESS
 
 ### Tasks
 
-- [ ] 6.1 Move this plan to `completed/`
+- [x] 6.1 Move this plan to `completed/`
 - [ ] 6.2 **Ask on #1498** before push / PR / merge. The PR description lists what was adopted,
       what was not, and why
 - [ ] 6.3 Report on #1498: what was adopted, what was deliberately not, and which claims in the

@@ -14,7 +14,7 @@
 **Last Updated**: 2026-02-13
 
 **Related**:
-- [INVESTIGATE-intune-windows-deployment.md](INVESTIGATE-intune-windows-deployment.md) -- the parent investigation (Intune, repo structure, all apps)
+- [INVESTIGATE-intune-windows-deployment.md](../completed/INVESTIGATE-intune-windows-deployment.md) -- the parent investigation (Intune, repo structure, all apps)
 - `scripts-win/wsl2/` -- the features package we built (install.ps1, detect.ps1, build.ps1, tests)
 - [INVESTIGATE-windows-one-script-install.md](INVESTIGATE-windows-one-script-install.md) -- (added 2026-09-25) the user-run one-script install; this file is its IT-deployed fallback (Option C)
 
