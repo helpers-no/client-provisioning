@@ -34,7 +34,7 @@ Fleet work is on the bus in `terchris/urb-agents` —
 | Make the CI checks required on `main` (branch protection) | Terje | 2026-09-25 | CI being a real gate, not advisory | #1528 |
 | Which of the four asks to start: user-run script (also the faster test), end-user README, web page (`helpers-no/sovereignsky-site`), GitHub Actions `.intunewin` build and public release | Terje | 2026-09-25 | Everything after the plan review; the installer lives **here** (decided, #1509) | #1520 |
 | A **blank** Jamf Mac, for the clean-install path only. Deferred: Terje would have to ask the Jamf admin, and nothing needs it yet. **tecMacWork** (Jamf-managed, Rancher already installed) covers detection, second run, and parts a/d of #1510 | Terje / Jamf admin | 2026-09-25 | Proving the Mac clean-install path | #1510 |
-| DCT: release assets + `SHA256SUMS`, a pinned image, a disk-space figure, and the `devcontainer-init` behaviours moved into its script | devcontainer-toolbox | 2026-09-25 | Pinned, verified handover (#1505 points 2, 4) | #1505 |
+| DCT's **first pinned release** (tag, `SHA256SUMS`, `host-requirements.json`, pinned image). `dct-init` itself is done (DCT 1.9.0) | devcontainer-toolbox | 2026-09-25 | Shipping anything that calls DCT; retiring `devcontainer-init` (#1510 c) | #1505, #1543 |
 
 ## If Terje wants work started, these rank highest
 
